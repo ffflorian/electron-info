@@ -1,1 +1,1 @@
-export * from './Boilerplate';
+export * from './ElectronInfo';

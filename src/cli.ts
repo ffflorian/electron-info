@@ -1,53 +1,59 @@
 #!/usr/bin/env node
 
-import {getYesNo} from 'cli-interact';
 import * as program from 'commander';
-import * as fs from 'fs-extra';
 import * as path from 'path';
+import {ElectronInfo} from './ElectronInfo';
 
-import {TSBoilerplate} from './Boilerplate';
-
-const defaultPackageJsonPath = path.join(__dirname, 'package.json');
-const packageJsonPath = fs.existsSync(defaultPackageJsonPath)
-  ? defaultPackageJsonPath
-  : path.join(__dirname, '../package.json');
-
-const {description, name, version}: {description: string; name: string; version: string} = fs.readJSONSync(
-  packageJsonPath
-);
+const packageJsonPath = path.join(__dirname, '../package.json');
+const {description, name, version} = require(packageJsonPath);
 
 program
-  .name(name.replace(/^@[^/]+\//, ''))
+  .name(name)
   .description(description)
-  .option('-o, --output <dir>', 'set the output directory', '.')
-  .option('-n, --project-name <name>', 'set the project name')
-  .option('-d, --project-description <description>', 'set the project name')
-  .option('-y, --yes', 'Use default options')
-  .version(version, '-v, --version')
-  .parse(process.argv);
+  .option('-f, --force', 'Force downloading the latest release file')
+  .version(version, '-v, --version');
 
-const boilerplate = new TSBoilerplate({
-  ...(program.projectDescription && {description: program.projectDescription}),
-  ...(program.projectName && {name: program.projectName}),
-  ...(program.output && {outputDir: program.output}),
-  ...(typeof program.yes !== 'undefined' && {yes: program.yes}),
-});
-
-if (!fs.existsSync(path.resolve('.git')) && !program.yes) {
-  const canContinue = getYesNo('No git directory found. Do you really want to continue?');
-  if (!canContinue) {
-    process.exit();
-  }
-}
-
-boilerplate
-  .download()
-  .then(() => boilerplate.unzip())
-  .then(() => boilerplate.write())
-  .then(() => boilerplate.cleanup())
-  .then(() => console.log('Done'))
-  .catch(async error => {
-    console.error(error);
-    await boilerplate.cleanup();
-    process.exit(1);
+program
+  .command('chrome')
+  .alias('c')
+  .description('Get informations about a Chrome version (e.g. "chrome 73")')
+  .arguments('[version]')
+  .action(async version => {
+    try {
+      const releases = await new ElectronInfo().getChromeVersion(version, true);
+      console.log(releases);
+    } catch (error) {
+      console.error(error);
+    }
   });
+
+program
+  .command('electron')
+  .description('Get informations about an Electron version (e.g. "electron 5.0.7")')
+  .arguments('[version]')
+  .action(async version => {
+    try {
+      const releases = await new ElectronInfo().getElectronVersion(version, true);
+      console.log(releases);
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+program
+  .command('all')
+  .description('Get informations about all Electron versions')
+  .action(async () => {
+    try {
+      const releases = await new ElectronInfo().getAll(true);
+      console.log(releases);
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+program.parse(process.argv);
+
+if (!program.args.length) {
+  program.help();
+}
