@@ -15,6 +15,7 @@ program
   .option('-f, --force', 'Force downloading the latest release file')
   .option('-r, --raw', 'Output raw JSON')
   .option('--no-colors', `Don't use colors for displaying`)
+  .option('--no-prereleases', `Don't include Electron prereleases`)
   .version(version, '-v, --version');
 
 program
@@ -28,7 +29,11 @@ program
       process.exit();
     }
     try {
-      const releases = await new ElectronInfo().getElectronReleases(version, !parent.raw as any, !parent.disableColors);
+      const releases = await new ElectronInfo({electronPrereleases: parent.prereleases}).getElectronReleases(
+        version,
+        !parent.raw as any,
+        parent.colors
+      );
       console.log(releases);
     } catch (error) {
       console.error(error);
@@ -47,11 +52,11 @@ for (const dependency of SupportedDependencies) {
         process.exit();
       }
       try {
-        const releases = await new ElectronInfo().getDependencyReleases(
+        const releases = await new ElectronInfo({electronPrereleases: parent.prereleases}).getDependencyReleases(
           dependency,
           version,
           !parent.raw as any,
-          !parent.disableColors
+          parent.colors
         );
         console.log(releases);
       } catch (error) {
@@ -65,7 +70,10 @@ program
   .description('Get informations about all versions')
   .action(async ({parent}) => {
     try {
-      const releases = await new ElectronInfo().getAllReleases(!parent.raw as any, !parent.disableColors);
+      const releases = await new ElectronInfo({electronPrereleases: parent.prereleases}).getAllReleases(
+        !parent.raw as any,
+        parent.colors
+      );
       console.log(releases);
     } catch (error) {
       console.error(error);

@@ -13,6 +13,7 @@ Options:
   -f, --force           Force downloading the latest release file
   -r, --raw             Output raw JSON
   --no-colors           Don't use colors for displaying
+  --no-prereleases      Don't include Electron prereleases
   -v, --version         output the version number
   -h, --help            output usage information
 

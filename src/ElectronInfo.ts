@@ -31,8 +31,13 @@ export interface RawReleaseInfo {
 }
 
 interface Options {
+  /** Default is `true`. */
+  electronPrereleases?: boolean;
+  /** Default is `false`. */
   forceUpdate?: boolean;
+  /** Default is https://unpkg.com/electron-releases@latest/lite.json. */
   releasesUrl?: string;
+  /** Will be created if not defined. */
   tempDirectory?: string;
 }
 
@@ -43,6 +48,7 @@ const accessAsync = promisify(fs.access);
 const {bold} = Chalk;
 
 const defaultOptions: Required<Options> = {
+  electronPrereleases: true,
   forceUpdate: false,
   releasesUrl: 'https://unpkg.com/electron-releases@latest/lite.json',
   tempDirectory: '',
@@ -207,7 +213,11 @@ export class ElectronInfo {
 
   private async getVersions(key: 'electron' | keyof RawDeps, inputVersion: string): Promise<string[]> {
     let dependencyVersions: string[] = [];
-    const releases = await this.getAllReleases();
+    let releases = await this.getAllReleases();
+
+    if (!this.options.electronPrereleases) {
+      releases = releases.filter(release => semver.prerelease(release.version) === null);
+    }
 
     if (key === 'electron') {
       dependencyVersions = releases.map(release => release.version);
@@ -227,10 +237,6 @@ export class ElectronInfo {
       inputVersion === 'latest'
         ? [dependencyVersions.shift()!]
         : dependencyVersions.filter(dependencyVersion => satisfiesArbitrary(dependencyVersion, inputVersion));
-
-    if (!parsedVersions) {
-      throw new Error(`No version found for "${inputVersion}"`);
-    }
 
     return parsedVersions;
   }
