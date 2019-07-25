@@ -1,3 +1,9 @@
+# [1.7.0](https://github.com/ffflorian/electron-info/compare/v1.6.1...v1.7.0) (2019-07-25)
+
+### Features
+
+- Don't return void ([#6](https://github.com/ffflorian/electron-info/issues/6)) ([77a6e56](https://github.com/ffflorian/electron-info/commit/77a6e56))
+
 ## [1.6.1](https://github.com/ffflorian/electron-info/compare/v1.6.0...v1.6.1) (2019-07-25)
 
 ### Bug Fixes
