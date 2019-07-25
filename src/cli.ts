@@ -16,9 +16,13 @@ program
 program
   .command('chrome')
   .alias('c')
-  .description('Get informations about a Chrome version (e.g. "chrome 73")')
+  .description('Get informations about a Chrome version (e.g. "chrome 73" or "chrome latest")')
   .arguments('[version]')
   .action(async version => {
+    if (!version) {
+      program.outputHelp();
+      process.exit();
+    }
     try {
       const releases = await new ElectronInfo().getChromeVersion(version, true);
       console.log(releases);
@@ -29,9 +33,14 @@ program
 
 program
   .command('electron')
-  .description('Get informations about an Electron version (e.g. "electron 5.0.7")')
+  .alias('e')
+  .description('Get informations about an Electron version (e.g. "electron 5.0.7" or "electron latest")')
   .arguments('[version]')
   .action(async version => {
+    if (!version) {
+      program.outputHelp();
+      process.exit();
+    }
     try {
       const releases = await new ElectronInfo().getElectronVersion(version, true);
       console.log(releases);
