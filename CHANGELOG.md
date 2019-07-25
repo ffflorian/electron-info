@@ -1,3 +1,9 @@
+# [1.5.0](https://github.com/ffflorian/electron-info/compare/v1.4.0...v1.5.0) (2019-07-25)
+
+### Features
+
+- A command for every dependency, support non-colored output ([cd36e73](https://github.com/ffflorian/electron-info/commit/cd36e73))
+
 # [1.4.0](https://github.com/ffflorian/electron-info/compare/v1.3.0...v1.4.0) (2019-07-25)
 
 ### Features
