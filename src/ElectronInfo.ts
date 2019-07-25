@@ -40,6 +40,7 @@ const mkdtempAsync = promisify(fs.mkdtemp);
 const writeFileAsync = promisify(fs.writeFile);
 const readFileAsync = promisify(fs.readFile);
 const accessAsync = promisify(fs.access);
+const {bold} = Chalk;
 
 const defaultOptions: Required<Options> = {
   forceUpdate: false,
@@ -123,14 +124,14 @@ export class ElectronInfo {
 
   private formatElectronRelease(release: RawReleaseInfo): string {
     const electronVersion = `${release.version}${release.prerelease ? '(prerelease)' : ''}`;
-    const table = [[Chalk.bold('Dependency'), Chalk.bold('Version')], [Chalk.bold('Electron'), electronVersion]];
+    const table = [[bold('Dependency'), bold('Version')], [bold('Electron'), electronVersion]];
 
     if (release.deps) {
       table.push(
-        [Chalk.bold.red('Node.js'), release.deps.node],
-        [Chalk.bold.green('Chrome'), release.deps.chrome],
-        [Chalk.bold.blue('OpenSSL'), release.deps.openssl],
-        [Chalk.bold.yellow('V8'), release.deps.v8]
+        [bold.red('Node.js'), release.deps.node],
+        [bold.green('Chrome'), release.deps.chrome],
+        [bold.blue('OpenSSL'), release.deps.openssl],
+        [bold.yellow('V8'), release.deps.v8]
       );
     }
 
@@ -143,11 +144,11 @@ export class ElectronInfo {
     }
 
     const table = [
-      [Chalk.bold('Dependency'), Chalk.bold('Version')],
-      [Chalk.bold('Chrome'), release.deps.chrome],
-      [Chalk.bold.red('Node.js'), release.deps.node],
-      [Chalk.bold.blue('OpenSSL'), release.deps.openssl],
-      [Chalk.bold.yellow('V8'), release.deps.v8],
+      [bold('Dependency'), bold('Version')],
+      [bold('Chrome'), release.deps.chrome],
+      [bold.red('Node.js'), release.deps.node],
+      [bold.blue('OpenSSL'), release.deps.openssl],
+      [bold.yellow('V8'), release.deps.v8],
     ];
 
     return createTable(table);
