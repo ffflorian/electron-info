@@ -44,6 +44,10 @@
   },
   "keywords": [
     "cli",
+    "info",
+    "electron",
+    "release",
+    "version",
     "typescript"
   ],
   "license": "MIT",
