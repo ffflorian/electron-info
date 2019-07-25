@@ -54,7 +54,15 @@ const defaultOptions: Required<Options> = {
   tempDirectory: '',
 };
 
-export const SupportedDependencies: Array<keyof RawDeps> = ['chrome', 'modules', 'node', 'openssl', 'uv', 'v8', 'zlib'];
+export const SupportedDependencies: RawDeps = {
+  chrome: 'Chrome',
+  modules: 'Modules',
+  node: 'Node.js',
+  openssl: 'OpenSSL',
+  uv: 'uv',
+  v8: 'V8',
+  zlib: 'zlib',
+};
 
 export class ElectronInfo {
   private readonly options: Required<Options>;
@@ -73,54 +81,46 @@ export class ElectronInfo {
     return allReleases;
   }
 
-  async getDependencyReleases(
-    dependency: keyof RawDeps,
-    version: string,
-    formatted?: false
-  ): Promise<RawReleaseInfo[] | void>;
+  async getDependencyReleases(dependency: keyof RawDeps, version: string, formatted?: false): Promise<RawReleaseInfo[]>;
   async getDependencyReleases(
     dependency: keyof RawDeps,
     version: string,
     formatted: true,
     colored?: boolean
-  ): Promise<RawReleaseInfo[] | string | void>;
+  ): Promise<RawReleaseInfo[] | string>;
   async getDependencyReleases(
     dependency: keyof RawDeps,
     version: string,
     formatted?: boolean,
     colored?: boolean
-  ): Promise<RawReleaseInfo[] | string | void> {
+  ): Promise<RawReleaseInfo[] | string> {
     const parsedVersions = await this.getVersions(dependency, version);
     const allReleases = await this.getAllReleases(false);
     const filteredReleases = allReleases.filter(
       release => release.deps && parsedVersions.includes(release.deps[dependency])
     );
 
-    if (filteredReleases) {
-      if (formatted) {
-        return this.formatDependencyReleases(filteredReleases, colored);
-      }
-      return filteredReleases;
+    if (formatted) {
+      return this.formatDependencyReleases(filteredReleases, colored);
     }
+    return filteredReleases;
   }
 
-  async getElectronReleases(version: string, formatted?: false): Promise<RawReleaseInfo[] | void>;
-  async getElectronReleases(version: string, formatted: true, colored?: boolean): Promise<string | void>;
+  async getElectronReleases(version: string, formatted?: false): Promise<RawReleaseInfo[]>;
+  async getElectronReleases(version: string, formatted: true, colored?: boolean): Promise<string>;
   async getElectronReleases(
     version: string,
     formatted?: boolean,
     colored?: boolean
-  ): Promise<RawReleaseInfo[] | string | void> {
+  ): Promise<RawReleaseInfo[] | string> {
     const parsedVersions = await this.getVersions('electron', version);
     const allReleases = await this.getAllReleases(false);
     const electronReleases = allReleases.filter(release => parsedVersions.includes(release.version));
 
-    if (electronReleases) {
-      if (formatted) {
-        return this.formatReleases(electronReleases, colored);
-      }
-      return electronReleases;
+    if (formatted) {
+      return this.formatReleases(electronReleases, colored);
     }
+    return electronReleases;
   }
 
   private buildFoundString(releases: RawReleaseInfo[]): string {
@@ -159,25 +159,24 @@ export class ElectronInfo {
   }
 
   private buildRawTables(releases: RawReleaseInfo[], colored: boolean = false): string[][][] {
-    const coloredOrNot = (text: string, style: typeof Chalk, colored: boolean = false): string =>
-      colored ? style(text) : text;
+    const coloredOrNot = (text: string, style: typeof Chalk): string => (colored ? style(text) : text);
 
     return releases.map(release => {
       const electronVersion = `${release.version}${release.prerelease ? ' (prerelease)' : ''}`;
       const table = [
-        [coloredOrNot('Dependency', bold, colored), coloredOrNot('Version', bold, colored)],
-        [coloredOrNot('Electron', bold, colored), electronVersion],
+        [coloredOrNot('Dependency', bold), coloredOrNot('Version', bold)],
+        [coloredOrNot('Electron', bold), electronVersion],
       ];
 
       if (release.deps) {
         table.push(
-          [coloredOrNot('Node.js', bold.red, colored), release.deps.node],
-          [coloredOrNot('Chrome', bold.green, colored), release.deps.chrome],
-          [coloredOrNot('OpenSSL', bold.blue, colored), release.deps.openssl],
-          [coloredOrNot('Modules', bold.yellow, colored), release.deps.modules],
-          [coloredOrNot('uv', bold.cyan, colored), release.deps.uv],
-          [coloredOrNot('V8', bold.gray, colored), release.deps.v8],
-          [coloredOrNot('zlib', bold.magenta, colored), release.deps.zlib]
+          [coloredOrNot('Node.js', bold.red), release.deps.node],
+          [coloredOrNot('Chrome', bold.green), release.deps.chrome],
+          [coloredOrNot('OpenSSL', bold.blue), release.deps.openssl],
+          [coloredOrNot('Modules', bold.yellow), release.deps.modules],
+          [coloredOrNot('uv', bold.cyan), release.deps.uv],
+          [coloredOrNot('V8', bold.gray), release.deps.v8],
+          [coloredOrNot('zlib', bold.magenta), release.deps.zlib]
         );
       }
 
