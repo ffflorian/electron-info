@@ -5,7 +5,6 @@ import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
 import {table as createTable} from 'table';
-import {promisify} from 'util';
 
 export interface RawDeps {
   chrome: string;
@@ -41,11 +40,8 @@ export interface Options {
   tempDirectory?: string;
 }
 
-const mkdtempAsync = promisify(fs.mkdtemp);
-const writeFileAsync = promisify(fs.writeFile);
-const readFileAsync = promisify(fs.readFile);
-const accessAsync = promisify(fs.access);
 const {bold} = Chalk;
+const {promises: fsAsync} = fs;
 
 const defaultOptions: Required<Options> = {
   electronPrereleases: true,
@@ -127,37 +123,6 @@ export class ElectronInfo {
     return `Found ${releases.length} release${releases.length === 1 ? '' : 's'}.`;
   }
 
-  private async fileIsReadable(filePath: string): Promise<boolean> {
-    try {
-      await accessAsync(filePath, fs.constants.F_OK | fs.constants.R_OK);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  private async downloadReleases(): Promise<RawReleaseInfo[]> {
-    const tempDirectory = await this.createTempDir();
-    const tempFile = path.join(tempDirectory, 'latest.json');
-
-    if ((await this.fileIsReadable(tempFile)) && !this.options.forceUpdate) {
-      const rawData = await readFileAsync(tempFile, 'utf8');
-      return JSON.parse(rawData);
-    }
-
-    const {data} = await axios.get(this.options.releasesUrl);
-    await writeFileAsync(tempFile, JSON.stringify(data));
-    return data;
-  }
-
-  private async createTempDir(): Promise<string> {
-    if (!this.options.tempDirectory) {
-      this.options.tempDirectory = await mkdtempAsync(path.join(os.tmpdir(), 'electron-info-'));
-    }
-
-    return this.options.tempDirectory;
-  }
-
   private buildRawTables(releases: RawReleaseInfo[], colored: boolean = false): string[][][] {
     const coloredOrNot = (text: string, style: typeof Chalk): string => (colored ? style(text) : text);
 
@@ -184,7 +149,40 @@ export class ElectronInfo {
     });
   }
 
-  private formatReleases(releases: RawReleaseInfo[], colored: boolean = false): string {
+  private async createTempDir(): Promise<string> {
+    if (!this.options.tempDirectory) {
+      this.options.tempDirectory = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'electron-info-'));
+    }
+
+    return this.options.tempDirectory;
+  }
+
+  private async downloadReleases(): Promise<RawReleaseInfo[]> {
+    const tempDirectory = await this.createTempDir();
+    const tempFile = path.join(tempDirectory, 'latest.json');
+
+    if ((await this.fileIsReadable(tempFile)) && !this.options.forceUpdate) {
+      const rawData = await fsAsync.readFile(tempFile, 'utf8');
+      return JSON.parse(rawData);
+    }
+
+    const {data} = await axios.get(this.options.releasesUrl);
+    await fsAsync.writeFile(tempFile, JSON.stringify(data));
+    return data;
+  }
+
+  private async fileIsReadable(filePath: string): Promise<boolean> {
+    try {
+      await fsAsync.access(filePath, fs.constants.F_OK | fs.constants.R_OK);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  private formatDependencyReleases(releases: RawReleaseInfo[], colored: boolean = false): string {
+    releases = releases.filter(release => !!release.deps);
+
     if (!releases.length) {
       return this.buildFoundString(releases);
     }
@@ -196,9 +194,7 @@ export class ElectronInfo {
     return `${joinedReleases}\n${this.buildFoundString(releases)}`;
   }
 
-  private formatDependencyReleases(releases: RawReleaseInfo[], colored: boolean = false): string {
-    releases = releases.filter(release => !!release.deps);
-
+  private formatReleases(releases: RawReleaseInfo[], colored: boolean = false): string {
     if (!releases.length) {
       return this.buildFoundString(releases);
     }
