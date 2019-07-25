@@ -129,8 +129,8 @@ export class ElectronInfo {
     return this.options.tempDirectory;
   }
 
-  private formatElectronRelease(release: RawReleaseInfo): string {
-    const electronVersion = `${release.version}${release.prerelease ? '(prerelease)' : ''}`;
+  private buildTable(release: RawReleaseInfo): string[][] {
+    const electronVersion = `${release.version}${release.prerelease ? ' (prerelease)' : ''}`;
     const table = [[bold('Dependency'), bold('Version')], [bold('Electron'), electronVersion]];
 
     if (release.deps) {
@@ -142,7 +142,11 @@ export class ElectronInfo {
       );
     }
 
-    return createTable(table);
+    return table;
+  }
+
+  private formatElectronRelease(release: RawReleaseInfo): string {
+    return createTable(this.buildTable(release));
   }
 
   private formatChromeRelease(release: RawReleaseInfo): string {
@@ -150,15 +154,7 @@ export class ElectronInfo {
       return '';
     }
 
-    const table = [
-      [bold('Dependency'), bold('Version')],
-      [bold('Chrome'), release.deps.chrome],
-      [bold.red('Node.js'), release.deps.node],
-      [bold.blue('OpenSSL'), release.deps.openssl],
-      [bold.yellow('V8'), release.deps.v8],
-    ];
-
-    return createTable(table);
+    return createTable(this.buildTable(release));
   }
 
   private async parseVersion(key: 'electron' | keyof RawDeps, version: string): Promise<string> {

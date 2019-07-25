@@ -10,7 +10,8 @@ Usage: electron-info [options] [command]
 Get informations about Electron versions.
 
 Options:
-  -f, --force           Force downloading the latest release file
+  -f, --force           Force downloading the latest release file (default: false)
+  -r, --raw             Output raw JSON (default: false)
   -v, --version         output the version number
   -h, --help            output usage information
 
@@ -20,7 +21,7 @@ Commands:
   all                   Get informations about all Electron versions
 ```
 
-### Example
+### Examples
 
 ```
 $ electron-info electron 4
@@ -37,4 +38,35 @@ $ electron-info electron 4
 ╟────────────┼───────────────────────╢
 ║ V8         │ 6.9.427.31-electron.0 ║
 ╚════════════╧═══════════════════════╝
+```
+
+```
+$ electron-info chrome 71
+╔════════════╤═════════════════════════════════════╗
+║ Dependency │ Version                             ║
+╟────────────┼─────────────────────────────────────╢
+║ Electron   │ 5.0.0-nightly.20190122 (prerelease) ║
+╟────────────┼─────────────────────────────────────╢
+║ Node.js    │ 12.0.0                              ║
+╟────────────┼─────────────────────────────────────╢
+║ Chrome     │ 71.0.3578.98                        ║
+╟────────────┼─────────────────────────────────────╢
+║ OpenSSL    │ 1.1.0                               ║
+╟────────────┼─────────────────────────────────────╢
+║ V8         │ 7.1.302.31-electron.0               ║
+╚════════════╧═════════════════════════════════════╝
+
+╔════════════╤═════════════════════════════════════╗
+║ Dependency │ Version                             ║
+╟────────────┼─────────────────────────────────────╢
+║ Electron   │ 5.0.0-nightly.20190121 (prerelease) ║
+╟────────────┼─────────────────────────────────────╢
+║ Node.js    │ 12.0.0                              ║
+╟────────────┼─────────────────────────────────────╢
+║ Chrome     │ 71.0.3578.98                        ║
+╟────────────┼─────────────────────────────────────╢
+║ OpenSSL    │ 1.1.0                               ║
+╟────────────┼─────────────────────────────────────╢
+║ V8         │ 7.1.302.31-electron.0               ║
+╚════════════╧═════════════════════════════════════╝
 ```

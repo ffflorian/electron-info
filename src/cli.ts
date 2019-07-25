@@ -26,9 +26,13 @@ program
     }
     try {
       const releases = await new ElectronInfo().getChromeVersion(version, !parent.raw);
-      if (releases) {
-        for (const release of releases) {
-          console.log(release);
+      if (parent.raw) {
+        console.log(releases);
+      } else {
+        if (releases) {
+          for (const release of releases) {
+            console.log(release);
+          }
         }
       }
     } catch (error) {
@@ -60,7 +64,15 @@ program
   .action(async ({parent}) => {
     try {
       const releases = await new ElectronInfo().getAll(!parent.raw);
-      console.log(releases);
+      if (parent.raw || typeof releases === 'string') {
+        console.log(releases);
+      } else {
+        if (Array.isArray(releases)) {
+          for (const release of releases) {
+            console.log(release);
+          }
+        }
+      }
     } catch (error) {
       console.error(error);
     }
