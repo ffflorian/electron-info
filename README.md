@@ -4,11 +4,9 @@ Get informations about Electron versions. Uses [electron-releases](https://unpkg
 
 ## Installation
 
-```shell
-yarn global add electron-info
-# or
-npm i -g electron-info
-```
+Just run `npx electron-info`.
+
+If you'd like to install it permanently, run `yarn global add electron-info` or `npm i -g electron-info`.
 
 ## CLI Usage
 
