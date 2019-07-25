@@ -66,19 +66,19 @@ export class ElectronInfo {
     return releases;
   }
 
-  async getChromeVersion(version: string, formatted?: false): Promise<RawReleaseInfo | void>;
-  async getChromeVersion(version: string, formatted?: boolean): Promise<RawReleaseInfo | string | void>;
-  async getChromeVersion(version: string, formatted: true): Promise<string | void>;
-  async getChromeVersion(version: string, formatted: boolean = false): Promise<RawReleaseInfo | string | void> {
+  async getChromeVersion(version: string, formatted?: false): Promise<RawReleaseInfo[] | void>;
+  async getChromeVersion(version: string, formatted?: boolean): Promise<RawReleaseInfo[] | string[] | void>;
+  async getChromeVersion(version: string, formatted: true): Promise<string[] | void>;
+  async getChromeVersion(version: string, formatted: boolean = false): Promise<RawReleaseInfo[] | string[] | void> {
     const parsedVersion = await this.parseVersion('chrome', version);
     const releases = await this.getAll(false);
-    const release = releases.find(release => release.deps && release.deps.chrome === parsedVersion);
+    const chromeReleases = releases.filter(release => release.deps && release.deps.chrome === parsedVersion);
 
-    if (release) {
+    if (chromeReleases) {
       if (formatted) {
-        return this.formatChromeRelease(release);
+        return chromeReleases.map(release => this.formatChromeRelease(release));
       }
-      return release;
+      return chromeReleases;
     }
   }
 

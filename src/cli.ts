@@ -26,7 +26,11 @@ program
     }
     try {
       const releases = await new ElectronInfo().getChromeVersion(version, !parent.raw);
-      console.log(releases);
+      if (releases) {
+        for (const release of releases) {
+          console.log(release);
+        }
+      }
     } catch (error) {
       console.error(error);
     }
