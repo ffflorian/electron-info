@@ -25,16 +25,8 @@ program
       process.exit();
     }
     try {
-      const releases = await new ElectronInfo().getChromeVersion(version, !parent.raw);
-      if (parent.raw) {
-        console.log(releases);
-      } else {
-        if (releases) {
-          for (const release of releases) {
-            console.log(release);
-          }
-        }
-      }
+      const releases = await new ElectronInfo().getChromeReleases(version, !parent.raw);
+      console.log(releases);
     } catch (error) {
       console.error(error);
     }
@@ -51,7 +43,7 @@ program
       process.exit();
     }
     try {
-      const releases = await new ElectronInfo().getElectronVersion(version, !parent.raw);
+      const releases = await new ElectronInfo().getElectronReleases(version, !parent.raw);
       console.log(releases);
     } catch (error) {
       console.error(error);
@@ -64,15 +56,7 @@ program
   .action(async ({parent}) => {
     try {
       const releases = await new ElectronInfo().getAllReleases(!parent.raw);
-      if (parent.raw || typeof releases === 'string') {
-        console.log(releases);
-      } else {
-        if (Array.isArray(releases)) {
-          for (const release of releases) {
-            console.log(release);
-          }
-        }
-      }
+      console.log(releases);
     } catch (error) {
       console.error(error);
     }

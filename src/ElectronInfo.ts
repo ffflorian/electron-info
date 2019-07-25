@@ -59,43 +59,47 @@ export class ElectronInfo {
   async getAllReleases(formatted?: boolean): Promise<RawReleaseInfo[] | string>;
   async getAllReleases(formatted: true): Promise<string>;
   async getAllReleases(formatted: boolean = false): Promise<RawReleaseInfo[] | string> {
-    const releases = await this.getReleases();
+    const allReleases = await this.downloadReleases();
     if (formatted) {
-      return releases.map(release => this.formatElectronReleases([release])).join('\n');
+      return this.formatReleases(allReleases);
     }
-    return releases;
+    return allReleases;
   }
 
-  async getChromeVersion(version: string, formatted?: false): Promise<RawReleaseInfo[] | void>;
-  async getChromeVersion(version: string, formatted?: boolean): Promise<RawReleaseInfo[] | string[] | void>;
-  async getChromeVersion(version: string, formatted: true): Promise<string[] | void>;
-  async getChromeVersion(version: string, formatted: boolean = false): Promise<RawReleaseInfo[] | string[] | void> {
+  async getChromeReleases(version: string, formatted?: false): Promise<RawReleaseInfo[] | void>;
+  async getChromeReleases(version: string, formatted?: boolean): Promise<RawReleaseInfo[] | string | void>;
+  async getChromeReleases(version: string, formatted: true): Promise<string | void>;
+  async getChromeReleases(version: string, formatted: boolean = false): Promise<RawReleaseInfo[] | string | void> {
     const parsedVersions = await this.getVersions('chrome', version);
     const releases = await this.getAllReleases(false);
     const chromeReleases = releases.filter(release => release.deps && parsedVersions.includes(release.deps.chrome));
 
     if (chromeReleases) {
       if (formatted) {
-        return chromeReleases.map(release => this.formatChromeRelease([release]));
+        return this.formatChromeReleases(chromeReleases);
       }
       return chromeReleases;
     }
   }
 
-  async getElectronVersion(version: string, formatted?: false): Promise<RawReleaseInfo[] | void>;
-  async getElectronVersion(version: string, formatted?: boolean): Promise<RawReleaseInfo[] | string | void>;
-  async getElectronVersion(version: string, formatted: true): Promise<string | void>;
-  async getElectronVersion(version: string, formatted: boolean = false): Promise<RawReleaseInfo[] | string | void> {
+  async getElectronReleases(version: string, formatted?: false): Promise<RawReleaseInfo[] | void>;
+  async getElectronReleases(version: string, formatted?: boolean): Promise<RawReleaseInfo[] | string | void>;
+  async getElectronReleases(version: string, formatted: true): Promise<string | void>;
+  async getElectronReleases(version: string, formatted: boolean = false): Promise<RawReleaseInfo[] | string | void> {
     const parsedVersions = await this.getVersions('electron', version);
     const releases = await this.getAllReleases(false);
     const electronReleases = releases.filter(release => parsedVersions.includes(release.version));
 
     if (electronReleases) {
       if (formatted) {
-        return this.formatElectronReleases(electronReleases);
+        return this.formatReleases(electronReleases);
       }
       return electronReleases;
     }
+  }
+
+  private buildFoundString(releases: RawReleaseInfo[]): string {
+    return `Found ${releases.length} release${releases.length === 1 ? '' : 's'}.`;
   }
 
   private async fileIsReadable(filePath: string): Promise<boolean> {
@@ -107,7 +111,7 @@ export class ElectronInfo {
     }
   }
 
-  private async getReleases(): Promise<RawReleaseInfo[]> {
+  private async downloadReleases(): Promise<RawReleaseInfo[]> {
     const tempDirectory = await this.createTempDir();
     const tempFile = path.join(tempDirectory, 'latest.json');
 
@@ -147,22 +151,30 @@ export class ElectronInfo {
     });
   }
 
-  private formatElectronReleases(releases: RawReleaseInfo[]): string {
-    return this.buildTables(releases)
+  private formatReleases(releases: RawReleaseInfo[]): string {
+    if (!releases.length) {
+      return `Found 0 releases.`;
+    }
+
+    const joinedReleases = this.buildTables(releases)
       .map(table => createTable(table))
       .join('\n');
+
+    return `${joinedReleases}\n${this.buildFoundString(releases)}`;
   }
 
-  private formatChromeRelease(releases: RawReleaseInfo[]): string {
+  private formatChromeReleases(releases: RawReleaseInfo[]): string {
     releases = releases.filter(release => !!release.deps);
 
     if (!releases.length) {
-      return '';
+      return `Found 0 releases.`;
     }
 
-    return this.buildTables(releases)
+    const joinedReleases = this.buildTables(releases)
       .map(table => createTable(table))
       .join('\n');
+
+    return `${joinedReleases}\n${this.buildFoundString(releases)}`;
   }
 
   private async getVersions(key: 'electron' | keyof RawDeps, inputVersion: string): Promise<string[]> {
