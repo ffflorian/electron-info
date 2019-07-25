@@ -1,3 +1,9 @@
+# [1.3.0](https://github.com/ffflorian/electron-info/compare/v1.2.1...v1.3.0) (2019-07-25)
+
+### Features
+
+- Display all versions satisfying SemVer ([104a41a](https://github.com/ffflorian/electron-info/commit/104a41a))
+
 ## [1.2.1](https://github.com/ffflorian/electron-info/compare/v1.2.0...v1.2.1) (2019-07-25)
 
 ### Bug Fixes
