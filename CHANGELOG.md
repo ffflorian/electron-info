@@ -1,3 +1,9 @@
+## [1.6.1](https://github.com/ffflorian/electron-info/compare/v1.6.0...v1.6.1) (2019-07-25)
+
+### Bug Fixes
+
+- Export options ([686206e](https://github.com/ffflorian/electron-info/commit/686206e))
+
 # [1.6.0](https://github.com/ffflorian/electron-info/compare/v1.5.0...v1.6.0) (2019-07-25)
 
 ### Features
