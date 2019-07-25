@@ -55,8 +55,9 @@ export class ElectronInfo {
     this.options = {...defaultOptions, ...options};
   }
 
-  async getAll(formatted: true): Promise<string>;
   async getAll(formatted?: false): Promise<RawReleaseInfo[]>;
+  async getAll(formatted?: boolean): Promise<RawReleaseInfo[] | string>;
+  async getAll(formatted: true): Promise<string>;
   async getAll(formatted: boolean = false): Promise<RawReleaseInfo[] | string> {
     const releases = await this.getReleases();
     if (formatted) {
@@ -65,6 +66,9 @@ export class ElectronInfo {
     return releases;
   }
 
+  async getChromeVersion(version: string, formatted?: false): Promise<RawReleaseInfo | void>;
+  async getChromeVersion(version: string, formatted?: boolean): Promise<RawReleaseInfo | string | void>;
+  async getChromeVersion(version: string, formatted: true): Promise<string | void>;
   async getChromeVersion(version: string, formatted: boolean = false): Promise<RawReleaseInfo | string | void> {
     const parsedVersion = await this.parseVersion('chrome', version);
     const releases = await this.getAll(false);
@@ -78,6 +82,9 @@ export class ElectronInfo {
     }
   }
 
+  async getElectronVersion(version: string, formatted?: false): Promise<RawReleaseInfo | void>;
+  async getElectronVersion(version: string, formatted?: boolean): Promise<RawReleaseInfo | string | void>;
+  async getElectronVersion(version: string, formatted: true): Promise<string | void>;
   async getElectronVersion(version: string, formatted: boolean = false): Promise<RawReleaseInfo | string | void> {
     const parsedVersion = await this.parseVersion('electron', version);
     const releases = await this.getAll(false);
