@@ -42,6 +42,15 @@ describe('ElectronInfo', () => {
 
       expect(result.length).toBe(27);
     });
+
+    it('Returns nothing for invalid versions', async () => {
+      const result = await new ElectronInfo({
+        releasesUrl: mockUrl,
+        tempDirectory: tempDir,
+      }).getElectronReleases('invalid');
+
+      expect(result.length).toBe(0);
+    });
   });
 
   describe('getDependencyReleases', () => {
@@ -63,6 +72,15 @@ describe('ElectronInfo', () => {
       }).getDependencyReleases('chrome', '~66');
 
       expect(result.length).toBe(55);
+    });
+
+    it('Returns nothing for invalid versions', async () => {
+      const result = await new ElectronInfo({
+        releasesUrl: mockUrl,
+        tempDirectory: tempDir,
+      }).getDependencyReleases('chrome', 'invalid');
+
+      expect(result.length).toBe(0);
     });
   });
 });
