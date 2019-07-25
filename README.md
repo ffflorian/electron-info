@@ -4,7 +4,7 @@ Get informations about Electron versions.
 
 ## Installation
 
-```
+```shell
 yarn global add electron-info
 # or
 npm i -g electron-info
@@ -39,8 +39,8 @@ Commands:
 
 ### Examples
 
-```
-electron-info electron 4
+```shell
+$ electron-info electron 4
 ╔════════════╤═══════════════════════╗
 ║ Dependency │ Version               ║
 ╟────────────┼───────────────────────╢
@@ -74,7 +74,7 @@ electron-info electron 4
 Found 41 releases.
 ```
 
-```
+```shell
 $ electron-info chrome 71
 ╔════════════╤═════════════════════════════════════╗
 ║ Dependency │ Version                             ║
