@@ -72,7 +72,7 @@ export class ElectronInfo {
 
     if (release) {
       if (formatted) {
-        return this.formatChromeRelease(release!);
+        return this.formatChromeRelease(release);
       }
       return release;
     }
@@ -85,7 +85,7 @@ export class ElectronInfo {
 
     if (release) {
       if (formatted) {
-        return this.formatElectronRelease(release!);
+        return this.formatElectronRelease(release);
       }
       return release;
     }
@@ -168,9 +168,11 @@ export class ElectronInfo {
       version === 'latest'
         ? versions.shift()
         : semver.maxSatisfying(versions, version, {includePrerelease: true, loose: true});
+
     if (!parsedVersion) {
       throw new Error(`No version found for "${version}"`);
     }
+
     return parsedVersion;
   }
 }
