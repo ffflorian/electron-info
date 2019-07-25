@@ -2,7 +2,7 @@
 
 import * as program from 'commander';
 import * as path from 'path';
-import {ElectronInfo, SupportedDependencies} from './ElectronInfo';
+import {ElectronInfo, RawDeps, SupportedDependencies} from './ElectronInfo';
 
 const packageJsonPath = path.join(__dirname, '../package.json');
 const {description, name, version} = require(packageJsonPath);
@@ -40,7 +40,7 @@ program
     }
   });
 
-for (const dependency of SupportedDependencies) {
+for (const dependency in SupportedDependencies) {
   program
     .command(dependency)
     .alias(dependency[0])
@@ -53,7 +53,7 @@ for (const dependency of SupportedDependencies) {
       }
       try {
         const releases = await new ElectronInfo({electronPrereleases: parent.prereleases}).getDependencyReleases(
-          dependency,
+          dependency as keyof RawDeps,
           version,
           !parent.raw as any,
           parent.colors
