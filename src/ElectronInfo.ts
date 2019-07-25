@@ -1,8 +1,10 @@
 import axios from 'axios';
+import Chalk from 'chalk';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
+import {table as createTable} from 'table';
 import {promisify} from 'util';
 
 export interface RawDeps {
@@ -30,6 +32,8 @@ export interface RawReleaseInfo {
 
 interface Options {
   forceUpdate?: boolean;
+  releasesUrl?: string;
+  tempDirectory?: string;
 }
 
 const mkdtempAsync = promisify(fs.mkdtemp);
@@ -37,15 +41,17 @@ const writeFileAsync = promisify(fs.writeFile);
 const readFileAsync = promisify(fs.readFile);
 const accessAsync = promisify(fs.access);
 
-export class ElectronInfo {
-  private tempDirectory?: string;
-  private readonly releasesUrl: string;
-  private readonly options: Options;
+const defaultOptions: Required<Options> = {
+  forceUpdate: false,
+  releasesUrl: 'https://unpkg.com/electron-releases@latest/lite.json',
+  tempDirectory: '',
+};
 
-  constructor(options: Options = {}) {
-    this.options = options;
-    this.releasesUrl = 'https://unpkg.com/electron-releases@latest/lite.json';
-    this.tempDirectory = '';
+export class ElectronInfo {
+  private readonly options: Required<Options>;
+
+  constructor(options?: Options) {
+    this.options = {...defaultOptions, ...options};
   }
 
   async getAll(formatted: true): Promise<string>;
@@ -102,51 +108,52 @@ export class ElectronInfo {
       return JSON.parse(rawData);
     }
 
-    const {data} = await axios.get(this.releasesUrl);
+    const {data} = await axios.get(this.options.releasesUrl);
     await writeFileAsync(tempFile, JSON.stringify(data));
     return data;
   }
 
   private async createTempDir(): Promise<string> {
-    if (!this.tempDirectory) {
-      this.tempDirectory = await mkdtempAsync(path.join(os.tmpdir(), 'electron-info-'));
+    if (!this.options.tempDirectory) {
+      this.options.tempDirectory = await mkdtempAsync(path.join(os.tmpdir(), 'electron-info-'));
     }
 
-    return this.tempDirectory;
+    return this.options.tempDirectory;
   }
 
   private formatElectronRelease(release: RawReleaseInfo): string {
-    let formatted = `Electron v${release.version}`;
-    if (release.prerelease) {
-      formatted += ' (prerelease)';
-    }
+    const electronVersion = `${release.version}${release.prerelease ? '(prerelease)' : ''}`;
+    const table = [[Chalk.bold('Dependency'), Chalk.bold('Version')], [Chalk.bold('Electron'), electronVersion]];
+
     if (release.deps) {
-      formatted += `\nNode.js v${release.deps.node}`;
-      formatted += `\nChrome v${release.deps.chrome}`;
-      formatted += `\nOpenSSL v${release.deps.openssl}`;
-      formatted += `\nV8 v${release.deps.v8}`;
+      table.push(
+        [Chalk.bold.red('Node.js'), release.deps.node],
+        [Chalk.bold.green('Chrome'), release.deps.chrome],
+        [Chalk.bold.blue('OpenSSL'), release.deps.openssl],
+        [Chalk.bold.yellow('V8'), release.deps.v8]
+      );
     }
-    return formatted;
+
+    return createTable(table);
   }
 
   private formatChromeRelease(release: RawReleaseInfo): string {
-    console.log('release', release);
-    let formatted = '';
-    if (release.deps) {
-      formatted += `Chrome v${release.deps.chrome}`;
-      formatted += `\nNode.js v${release.deps.node}`;
-      formatted += `\nChrome v${release.deps.chrome}`;
-      formatted += `\nOpenSSL v${release.deps.openssl}`;
-      formatted += `\nV8 v${release.deps.v8}`;
+    if (!release.deps) {
+      return '';
     }
-    return formatted;
+
+    const table = [
+      [Chalk.bold('Dependency'), Chalk.bold('Version')],
+      [Chalk.bold('Chrome'), release.deps.chrome],
+      [Chalk.bold.red('Node.js'), release.deps.node],
+      [Chalk.bold.blue('OpenSSL'), release.deps.openssl],
+      [Chalk.bold.yellow('V8'), release.deps.v8],
+    ];
+
+    return createTable(table);
   }
 
   private async parseVersion(key: 'electron' | keyof RawDeps, version: string): Promise<string> {
-    if (!semver.valid(version)) {
-      throw new Error(`Invalid version number "${version}"`);
-    }
-
     let versions: string[] = [];
     const releases = await this.getAll();
 
@@ -156,7 +163,10 @@ export class ElectronInfo {
       versions = releases.filter(release => Boolean(release.deps)).map(release => release.deps![key]);
     }
 
-    const parsedVersion = semver.maxSatisfying(versions, version);
+    const parsedVersion =
+      version === 'latest'
+        ? versions.shift()
+        : semver.maxSatisfying(versions, version, {includePrerelease: true, loose: true});
     if (!parsedVersion) {
       throw new Error(`No version found for "${version}"`);
     }
