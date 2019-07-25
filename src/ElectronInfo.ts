@@ -30,7 +30,7 @@ export interface RawReleaseInfo {
   version: string;
 }
 
-interface Options {
+export interface Options {
   /** Default is `true`. */
   electronPrereleases?: boolean;
   /** Default is `false`. */

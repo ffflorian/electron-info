@@ -2,7 +2,15 @@
 
 Get informations about Electron versions.
 
-## Usage
+## Installation
+
+```
+yarn global add electron-info
+# or
+npm i -g electron-info
+```
+
+## CLI Usage
 
 ```
 Usage: electron-info [options] [command]
@@ -98,3 +106,8 @@ $ electron-info chrome 71
 
 Found 2 releases.
 ```
+
+## TypeScript Usage
+
+- [see definitions](https://unpkg.com/electron-info@latest/dist/ElectronInfo.d.ts)
+- [see CLI](./src/cli.ts)
