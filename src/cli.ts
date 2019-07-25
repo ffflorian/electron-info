@@ -63,7 +63,7 @@ program
   .description('Get informations about all Electron versions')
   .action(async ({parent}) => {
     try {
-      const releases = await new ElectronInfo().getAll(!parent.raw);
+      const releases = await new ElectronInfo().getAllReleases(!parent.raw);
       if (parent.raw || typeof releases === 'string') {
         console.log(releases);
       } else {

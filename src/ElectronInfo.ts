@@ -55,13 +55,13 @@ export class ElectronInfo {
     this.options = {...defaultOptions, ...options};
   }
 
-  async getAll(formatted?: false): Promise<RawReleaseInfo[]>;
-  async getAll(formatted?: boolean): Promise<RawReleaseInfo[] | string>;
-  async getAll(formatted: true): Promise<string>;
-  async getAll(formatted: boolean = false): Promise<RawReleaseInfo[] | string> {
+  async getAllReleases(formatted?: false): Promise<RawReleaseInfo[]>;
+  async getAllReleases(formatted?: boolean): Promise<RawReleaseInfo[] | string>;
+  async getAllReleases(formatted: true): Promise<string>;
+  async getAllReleases(formatted: boolean = false): Promise<RawReleaseInfo[] | string> {
     const releases = await this.getReleases();
     if (formatted) {
-      return releases.map(release => this.formatElectronRelease(release)).join('\n');
+      return releases.map(release => this.formatElectronReleases([release])).join('\n');
     }
     return releases;
   }
@@ -70,31 +70,31 @@ export class ElectronInfo {
   async getChromeVersion(version: string, formatted?: boolean): Promise<RawReleaseInfo[] | string[] | void>;
   async getChromeVersion(version: string, formatted: true): Promise<string[] | void>;
   async getChromeVersion(version: string, formatted: boolean = false): Promise<RawReleaseInfo[] | string[] | void> {
-    const parsedVersion = await this.parseVersion('chrome', version);
-    const releases = await this.getAll(false);
-    const chromeReleases = releases.filter(release => release.deps && release.deps.chrome === parsedVersion);
+    const parsedVersions = await this.getVersions('chrome', version);
+    const releases = await this.getAllReleases(false);
+    const chromeReleases = releases.filter(release => release.deps && parsedVersions.includes(release.deps.chrome));
 
     if (chromeReleases) {
       if (formatted) {
-        return chromeReleases.map(release => this.formatChromeRelease(release));
+        return chromeReleases.map(release => this.formatChromeRelease([release]));
       }
       return chromeReleases;
     }
   }
 
-  async getElectronVersion(version: string, formatted?: false): Promise<RawReleaseInfo | void>;
-  async getElectronVersion(version: string, formatted?: boolean): Promise<RawReleaseInfo | string | void>;
+  async getElectronVersion(version: string, formatted?: false): Promise<RawReleaseInfo[] | void>;
+  async getElectronVersion(version: string, formatted?: boolean): Promise<RawReleaseInfo[] | string | void>;
   async getElectronVersion(version: string, formatted: true): Promise<string | void>;
-  async getElectronVersion(version: string, formatted: boolean = false): Promise<RawReleaseInfo | string | void> {
-    const parsedVersion = await this.parseVersion('electron', version);
-    const releases = await this.getAll(false);
-    const release = releases.find(release => release.version === parsedVersion);
+  async getElectronVersion(version: string, formatted: boolean = false): Promise<RawReleaseInfo[] | string | void> {
+    const parsedVersions = await this.getVersions('electron', version);
+    const releases = await this.getAllReleases(false);
+    const electronReleases = releases.filter(release => parsedVersions.includes(release.version));
 
-    if (release) {
+    if (electronReleases) {
       if (formatted) {
-        return this.formatElectronRelease(release);
+        return this.formatElectronReleases(electronReleases);
       }
-      return release;
+      return electronReleases;
     }
   }
 
@@ -129,53 +129,69 @@ export class ElectronInfo {
     return this.options.tempDirectory;
   }
 
-  private buildTable(release: RawReleaseInfo): string[][] {
-    const electronVersion = `${release.version}${release.prerelease ? ' (prerelease)' : ''}`;
-    const table = [[bold('Dependency'), bold('Version')], [bold('Electron'), electronVersion]];
+  private buildTables(releases: RawReleaseInfo[]): string[][][] {
+    return releases.map(release => {
+      const electronVersion = `${release.version}${release.prerelease ? ' (prerelease)' : ''}`;
+      const table = [[bold('Dependency'), bold('Version')], [bold('Electron'), electronVersion]];
 
-    if (release.deps) {
-      table.push(
-        [bold.red('Node.js'), release.deps.node],
-        [bold.green('Chrome'), release.deps.chrome],
-        [bold.blue('OpenSSL'), release.deps.openssl],
-        [bold.yellow('V8'), release.deps.v8]
-      );
-    }
+      if (release.deps) {
+        table.push(
+          [bold.red('Node.js'), release.deps.node],
+          [bold.green('Chrome'), release.deps.chrome],
+          [bold.blue('OpenSSL'), release.deps.openssl],
+          [bold.yellow('V8'), release.deps.v8]
+        );
+      }
 
-    return table;
+      return table;
+    });
   }
 
-  private formatElectronRelease(release: RawReleaseInfo): string {
-    return createTable(this.buildTable(release));
+  private formatElectronReleases(releases: RawReleaseInfo[]): string {
+    return this.buildTables(releases)
+      .map(table => createTable(table))
+      .join('\n');
   }
 
-  private formatChromeRelease(release: RawReleaseInfo): string {
-    if (!release.deps) {
+  private formatChromeRelease(releases: RawReleaseInfo[]): string {
+    releases = releases.filter(release => !!release.deps);
+
+    if (!releases.length) {
       return '';
     }
 
-    return createTable(this.buildTable(release));
+    return this.buildTables(releases)
+      .map(table => createTable(table))
+      .join('\n');
   }
 
-  private async parseVersion(key: 'electron' | keyof RawDeps, version: string): Promise<string> {
-    let versions: string[] = [];
-    const releases = await this.getAll();
+  private async getVersions(key: 'electron' | keyof RawDeps, inputVersion: string): Promise<string[]> {
+    let dependencyVersions: string[] = [];
+    const releases = await this.getAllReleases();
 
     if (key === 'electron') {
-      versions = releases.map(release => release.version);
+      dependencyVersions = releases.map(release => release.version);
     } else if (releases[0].deps![key]) {
-      versions = releases.filter(release => Boolean(release.deps)).map(release => release.deps![key]);
+      dependencyVersions = releases.filter(release => Boolean(release.deps)).map(release => release.deps![key]);
     }
 
-    const parsedVersion =
-      version === 'latest'
-        ? versions.shift()
-        : semver.maxSatisfying(versions, version, {includePrerelease: true, loose: true});
+    const satisfiesArbitrary = (dependencyVersion: string, inputVersion: string) => {
+      const dependencyVersionClean = semver.clean(dependencyVersion, {includePrerelease: true, loose: true}) || '';
+      return semver.satisfies(dependencyVersionClean, inputVersion, {
+        includePrerelease: true,
+        loose: true,
+      });
+    };
 
-    if (!parsedVersion) {
-      throw new Error(`No version found for "${version}"`);
+    const parsedVersions: string[] =
+      inputVersion === 'latest'
+        ? [dependencyVersions.shift()!]
+        : dependencyVersions.filter(dependencyVersion => satisfiesArbitrary(dependencyVersion, inputVersion));
+
+    if (!parsedVersions) {
+      throw new Error(`No version found for "${inputVersion}"`);
     }
 
-    return parsedVersion;
+    return parsedVersions;
   }
 }
