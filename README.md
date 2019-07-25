@@ -10,15 +10,22 @@ Usage: electron-info [options] [command]
 Get informations about Electron versions.
 
 Options:
-  -f, --force           Force downloading the latest release file (default: false)
-  -r, --raw             Output raw JSON (default: false)
+  -f, --force           Force downloading the latest release file
+  -r, --raw             Output raw JSON
+  --no-colors           Don't use colors for displaying
   -v, --version         output the version number
   -h, --help            output usage information
 
 Commands:
-  chrome|c [version]    Get informations about a Chrome version (e.g. "chrome 73" or "chrome latest")
   electron|e [version]  Get informations about an Electron version (e.g. "electron 5.0.7" or "electron latest")
-  all                   Get informations about all Electron versions
+  chrome|c [version]    Get informations about a chrome version
+  modules|m [version]   Get informations about a modules version
+  node|n [version]      Get informations about a node version
+  openssl|o [version]   Get informations about an openssl version
+  uv|u [version]        Get informations about an uv version
+  v8|v [version]        Get informations about a v8 version
+  zlib|z [version]      Get informations about a zlib version
+  all                   Get informations about all versions
 ```
 
 ### Examples

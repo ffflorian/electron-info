@@ -48,6 +48,8 @@ const defaultOptions: Required<Options> = {
   tempDirectory: '',
 };
 
+export const SupportedDependencies: Array<keyof RawDeps> = ['chrome', 'modules', 'node', 'openssl', 'uv', 'v8', 'zlib'];
+
 export class ElectronInfo {
   private readonly options: Required<Options>;
 
@@ -56,43 +58,60 @@ export class ElectronInfo {
   }
 
   async getAllReleases(formatted?: false): Promise<RawReleaseInfo[]>;
-  async getAllReleases(formatted?: boolean): Promise<RawReleaseInfo[] | string>;
-  async getAllReleases(formatted: true): Promise<string>;
-  async getAllReleases(formatted: boolean = false): Promise<RawReleaseInfo[] | string> {
+  async getAllReleases(formatted: true, colored?: boolean): Promise<string>;
+  async getAllReleases(formatted?: boolean, colored?: boolean): Promise<RawReleaseInfo[] | string> {
     const allReleases = await this.downloadReleases();
     if (formatted) {
-      return this.formatReleases(allReleases);
+      return this.formatReleases(allReleases, colored);
     }
     return allReleases;
   }
 
-  async getChromeReleases(version: string, formatted?: false): Promise<RawReleaseInfo[] | void>;
-  async getChromeReleases(version: string, formatted?: boolean): Promise<RawReleaseInfo[] | string | void>;
-  async getChromeReleases(version: string, formatted: true): Promise<string | void>;
-  async getChromeReleases(version: string, formatted: boolean = false): Promise<RawReleaseInfo[] | string | void> {
-    const parsedVersions = await this.getVersions('chrome', version);
-    const releases = await this.getAllReleases(false);
-    const chromeReleases = releases.filter(release => release.deps && parsedVersions.includes(release.deps.chrome));
+  async getDependencyReleases(
+    dependency: keyof RawDeps,
+    version: string,
+    formatted?: false
+  ): Promise<RawReleaseInfo[] | void>;
+  async getDependencyReleases(
+    dependency: keyof RawDeps,
+    version: string,
+    formatted: true,
+    colored?: boolean
+  ): Promise<RawReleaseInfo[] | string | void>;
+  async getDependencyReleases(
+    dependency: keyof RawDeps,
+    version: string,
+    formatted?: boolean,
+    colored?: boolean
+  ): Promise<RawReleaseInfo[] | string | void> {
+    const parsedVersions = await this.getVersions(dependency, version);
+    const allReleases = await this.getAllReleases(false);
+    const filteredReleases = allReleases.filter(
+      release => release.deps && parsedVersions.includes(release.deps[dependency])
+    );
 
-    if (chromeReleases) {
+    if (filteredReleases) {
       if (formatted) {
-        return this.formatChromeReleases(chromeReleases);
+        return this.formatDependencyReleases(filteredReleases, colored);
       }
-      return chromeReleases;
+      return filteredReleases;
     }
   }
 
   async getElectronReleases(version: string, formatted?: false): Promise<RawReleaseInfo[] | void>;
-  async getElectronReleases(version: string, formatted?: boolean): Promise<RawReleaseInfo[] | string | void>;
-  async getElectronReleases(version: string, formatted: true): Promise<string | void>;
-  async getElectronReleases(version: string, formatted: boolean = false): Promise<RawReleaseInfo[] | string | void> {
+  async getElectronReleases(version: string, formatted: true, colored?: boolean): Promise<string | void>;
+  async getElectronReleases(
+    version: string,
+    formatted?: boolean,
+    colored?: boolean
+  ): Promise<RawReleaseInfo[] | string | void> {
     const parsedVersions = await this.getVersions('electron', version);
-    const releases = await this.getAllReleases(false);
-    const electronReleases = releases.filter(release => parsedVersions.includes(release.version));
+    const allReleases = await this.getAllReleases(false);
+    const electronReleases = allReleases.filter(release => parsedVersions.includes(release.version));
 
     if (electronReleases) {
       if (formatted) {
-        return this.formatReleases(electronReleases);
+        return this.formatReleases(electronReleases, colored);
       }
       return electronReleases;
     }
@@ -133,17 +152,26 @@ export class ElectronInfo {
     return this.options.tempDirectory;
   }
 
-  private buildTables(releases: RawReleaseInfo[]): string[][][] {
+  private buildRawTables(releases: RawReleaseInfo[], colored: boolean = false): string[][][] {
+    const coloredOrNot = (text: string, style: typeof Chalk, colored: boolean = false): string =>
+      colored ? style(text) : text;
+
     return releases.map(release => {
       const electronVersion = `${release.version}${release.prerelease ? ' (prerelease)' : ''}`;
-      const table = [[bold('Dependency'), bold('Version')], [bold('Electron'), electronVersion]];
+      const table = [
+        [coloredOrNot('Dependency', bold, colored), coloredOrNot('Version', bold, colored)],
+        [coloredOrNot('Electron', bold, colored), electronVersion],
+      ];
 
       if (release.deps) {
         table.push(
-          [bold.red('Node.js'), release.deps.node],
-          [bold.green('Chrome'), release.deps.chrome],
-          [bold.blue('OpenSSL'), release.deps.openssl],
-          [bold.yellow('V8'), release.deps.v8]
+          [coloredOrNot('Node.js', bold.red, colored), release.deps.node],
+          [coloredOrNot('Chrome', bold.green, colored), release.deps.chrome],
+          [coloredOrNot('OpenSSL', bold.blue, colored), release.deps.openssl],
+          [coloredOrNot('Modules', bold.yellow, colored), release.deps.modules],
+          [coloredOrNot('uv', bold.cyan, colored), release.deps.uv],
+          [coloredOrNot('V8', bold.gray, colored), release.deps.v8],
+          [coloredOrNot('zlib', bold.magenta, colored), release.deps.zlib]
         );
       }
 
@@ -151,26 +179,26 @@ export class ElectronInfo {
     });
   }
 
-  private formatReleases(releases: RawReleaseInfo[]): string {
+  private formatReleases(releases: RawReleaseInfo[], colored: boolean = false): string {
     if (!releases.length) {
-      return `Found 0 releases.`;
+      return this.buildFoundString(releases);
     }
 
-    const joinedReleases = this.buildTables(releases)
+    const joinedReleases = this.buildRawTables(releases, colored)
       .map(table => createTable(table))
       .join('\n');
 
     return `${joinedReleases}\n${this.buildFoundString(releases)}`;
   }
 
-  private formatChromeReleases(releases: RawReleaseInfo[]): string {
+  private formatDependencyReleases(releases: RawReleaseInfo[], colored: boolean = false): string {
     releases = releases.filter(release => !!release.deps);
 
     if (!releases.length) {
-      return `Found 0 releases.`;
+      return this.buildFoundString(releases);
     }
 
-    const joinedReleases = this.buildTables(releases)
+    const joinedReleases = this.buildRawTables(releases, colored)
       .map(table => createTable(table))
       .join('\n');
 
