@@ -10,7 +10,7 @@
     "semver": "6.3.0",
     "table": "5.4.4"
   },
-  "description": "Get informations about Electron versions.",
+  "description": "Get informations about Electron releases.",
   "devDependencies": {
     "@ffflorian/prettier-config": "0.0.5",
     "@ffflorian/tslint-config": "0.5.0",

@@ -13,11 +13,11 @@ If you'd like to install it permanently, run `yarn global add electron-info` or 
 ```
 Usage: electron-info [options] [command]
 
-Get informations about Electron versions.
+Get informations about Electron releases.
 
 Allowed version argument inputs:
   - SemVer versions (e.g. "~7")
-  - Electron dist tags (e.g. "5-0-x")
+  - npm dist tags (e.g. "5-0-x", only Electron)
   - "all"
 
 Options:
@@ -29,15 +29,15 @@ Options:
   -h, --help            output usage information
 
 Commands:
-  electron|e [version]  Get informations about an Electron version
-  chrome|c [version]    Get informations about a chrome version
-  modules|m [version]   Get informations about a modules version
-  node|n [version]      Get informations about a node version
-  openssl|o [version]   Get informations about an openssl version
-  uv|u [version]        Get informations about an uv version
-  v8|v [version]        Get informations about a v8 version
-  zlib|z [version]      Get informations about a zlib version
-  all                   Get informations about all versions
+  electron|e [version]  Get informations about an Electron release
+  chrome|c [version]    Get informations about a chrome release
+  modules|m [version]   Get informations about a modules release
+  node|n [version]      Get informations about a node release
+  openssl|o [version]   Get informations about an openssl release
+  uv|u [version]        Get informations about an uv release
+  v8|v [version]        Get informations about a v8 release
+  zlib|z [version]      Get informations about a zlib release
+  all                   Get informations about all releases
 ```
 
 ### Examples
