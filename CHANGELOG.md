@@ -1,3 +1,9 @@
+# [1.8.0](https://github.com/ffflorian/electron-info/compare/v1.7.0...v1.8.0) (2019-07-26)
+
+### Features
+
+- Parse dist tags ([#9](https://github.com/ffflorian/electron-info/issues/9)) ([094c4e9](https://github.com/ffflorian/electron-info/commit/094c4e9))
+
 # [1.7.0](https://github.com/ffflorian/electron-info/compare/v1.6.1...v1.7.0) (2019-07-25)
 
 ### Features
