@@ -15,6 +15,11 @@ Usage: electron-info [options] [command]
 
 Get informations about Electron versions.
 
+Allowed version argument inputs:
+  - SemVer versions (e.g. "~7")
+  - Electron dist tags (e.g. "5-0-x")
+  - "all"
+
 Options:
   -f, --force           Force downloading the latest release file
   -r, --raw             Output raw JSON
@@ -24,7 +29,7 @@ Options:
   -h, --help            output usage information
 
 Commands:
-  electron|e [version]  Get informations about an Electron version (e.g. "electron 5.0.7" or "electron latest")
+  electron|e [version]  Get informations about an Electron version
   chrome|c [version]    Get informations about a chrome version
   modules|m [version]   Get informations about a modules version
   node|n [version]      Get informations about a node version

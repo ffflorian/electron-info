@@ -11,7 +11,9 @@ const needsN = (name: string) => `a${/^[aeoui]/.test(name) ? 'n' : ''} ${name}`;
 
 program
   .name(name)
-  .description(description)
+  .description(
+    `${description}\n\nAllowed version argument inputs:\n  - SemVer versions (e.g. "~7")\n  - Electron dist tags (e.g. "5-0-x")\n  - "all"`
+  )
   .option('-f, --force', 'Force downloading the latest release file')
   .option('-r, --raw', 'Output raw JSON')
   .option('--no-colors', `Don't use colors for displaying`)
@@ -21,7 +23,7 @@ program
 program
   .command('electron')
   .alias('e')
-  .description('Get informations about an Electron version (e.g. "electron 5.0.7" or "electron latest")')
+  .description('Get informations about an Electron version')
   .arguments('[version]')
   .action(async (version, {parent}) => {
     if (!version) {
