@@ -43,6 +43,15 @@ describe('ElectronInfo', () => {
       expect(result.length).toBe(27);
     });
 
+    it('Parses dist tags', async () => {
+      const result = await new ElectronInfo({
+        releasesUrl: mockUrl,
+        tempDirectory: tempDir,
+      }).getElectronReleases('5-0-x');
+
+      expect(result.length).toBe(1);
+    });
+
     it('Returns nothing for invalid versions', async () => {
       const result = await new ElectronInfo({
         releasesUrl: mockUrl,
