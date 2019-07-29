@@ -1,6 +1,6 @@
 # electron-info [![Build Status](https://action-badges.now.sh/ffflorian/electron-info)](https://github.com/ffflorian/electron-info/actions/) [![npm version](https://img.shields.io/npm/v/electron-info.svg?style=flat)](https://www.npmjs.com/package/electron-info) [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=ffflorian/electron-info)](https://dependabot.com)
 
-Get informations about Electron versions. Uses [electron-releases](https://unpkg.com/electron-releases@latest/lite.json).
+Get informations about Electron releases. Uses [electron-releases](https://unpkg.com/electron-releases@latest/lite.json).
 
 ## Installation
 
