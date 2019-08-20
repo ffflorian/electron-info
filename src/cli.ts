@@ -12,12 +12,17 @@ const needsN = (name: string) => `a${/^[aeoui]/.test(name) ? 'n' : ''} ${name}`;
 program
   .name(name)
   .description(
-    `${description}\n\nAllowed version argument inputs:\n  - SemVer versions (e.g. "~7")\n  - npm dist tags (e.g. "5-0-x", only Electron)\n  - "all"`
+    `${description}
+
+Allowed version argument inputs:
+  - SemVer versions (e.g. "~7")
+  - npm dist tags (e.g. "5-0-x", only Electron)
+  - "all"`
   )
   .option('-f, --force', 'Force downloading the latest release file')
   .option('-l, --limit <number>', 'Limit output of releases')
   .option('-r, --raw', 'Output raw JSON')
-  .option('-s, --source <url>', 'Use a custom releases source URL')
+  .option('-s, --source <url>', 'Use a custom releases source URL or path')
   .option('--no-colors', `Don't use colors for displaying`)
   .option('--no-prereleases', `Don't include Electron prereleases`)
   .version(version, '-v, --version');
