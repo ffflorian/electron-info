@@ -17,6 +17,7 @@ program
   .option('-f, --force', 'Force downloading the latest release file')
   .option('-l, --limit <number>', 'Limit output of releases')
   .option('-r, --raw', 'Output raw JSON')
+  .option('-s, --source <url>', 'Use a custom releases source URL')
   .option('--no-colors', `Don't use colors for displaying`)
   .option('--no-prereleases', `Don't include Electron prereleases`)
   .version(version, '-v, --version');
@@ -35,6 +36,7 @@ program
       const releases = await new ElectronInfo({
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
+        ...(parent.source && {releasesUrl: parent.source}),
       }).getElectronReleases(version, !parent.raw as any, parent.colors);
       console.log(releases);
     } catch (error) {
@@ -57,6 +59,7 @@ for (const dependency in SupportedDependencies) {
         const releases = await new ElectronInfo({
           ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
           ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
+          ...(parent.source && {releasesUrl: parent.source}),
         }).getDependencyReleases(dependency as keyof RawDeps, version, !parent.raw as any, parent.colors);
         console.log(releases);
       } catch (error) {
@@ -73,6 +76,7 @@ program
       const releases = await new ElectronInfo({
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
+        ...(parent.source && {releasesUrl: parent.source}),
       }).getAllReleases(!parent.raw as any, parent.colors);
       console.log(releases);
     } catch (error) {
