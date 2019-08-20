@@ -75,9 +75,9 @@ export class ElectronInfo {
     this.options.limit = Math.max(0, this.options.limit);
   }
 
-  async getAllReleases(formatted?: false, colored?: false, limit?: number): Promise<RawReleaseInfo[]>;
-  async getAllReleases(formatted: true, colored?: boolean, limit?: number): Promise<string>;
-  async getAllReleases(formatted?: boolean, colored?: boolean, limit?: number): Promise<RawReleaseInfo[] | string> {
+  async getAllReleases(formatted?: false): Promise<RawReleaseInfo[]>;
+  async getAllReleases(formatted: true, colored?: boolean): Promise<string>;
+  async getAllReleases(formatted?: boolean, colored?: boolean): Promise<RawReleaseInfo[] | string> {
     const allReleases = await this.downloadReleases();
     return formatted ? this.formatReleases(allReleases, colored) : allReleases;
   }
