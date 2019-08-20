@@ -21,6 +21,7 @@ Allowed version argument inputs:
   - "all"
 
 Options:
+  -d, --debug           Enable debug logging
   -f, --force           Force downloading the latest release file
   -l, --limit <number>  Limit output of releases
   -r, --raw             Output raw JSON

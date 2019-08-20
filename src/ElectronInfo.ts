@@ -34,17 +34,18 @@ export interface RawReleaseInfo {
 }
 
 export interface Options {
-  /** If Electron prereleases should be included. Default is `true`. */
+  /** Enable debug logging. Default: `false`. */
+  debug?: boolean;
+  /** If Electron prereleases should be included. Default: `true`. */
   electronPrereleases?: boolean;
-  /** Force downloading the latest release file. Default is `false`. */
+  /** Force downloading the latest release file. Default: `false`. */
   forceUpdate?: boolean;
-  /** Limit output of releases. Everything below 1 will be treated as no limit. Default: no limit */
+  /** Limit output of releases. Everything below 1 will be treated as no limit. Default: 0. */
   limit?: number;
-  /** Can be a URL or a local path. Default is https://unpkg.com/electron-releases@latest/lite.json. */
+  /** Can be a URL or a local path. Default: https://unpkg.com/electron-releases@latest/lite.json. */
   releasesUrl?: string;
   /**
-   * If a certain temporary directory should be used.
-   * The system's temporary directory will be used if not defined.
+   * Use a custom temporary directory. If not defined, the system's temporary directory will be used.
    */
   tempDirectory?: string;
 }
@@ -53,6 +54,7 @@ const {bold} = Chalk;
 const {promises: fsAsync} = fs;
 
 const defaultOptions: Required<Options> = {
+  debug: false,
   electronPrereleases: true,
   forceUpdate: false,
   limit: 0,
@@ -81,6 +83,9 @@ export class ElectronInfo {
       logger: console,
       markdown: false,
     });
+    if (this.options.debug) {
+      this.logger.state.isEnabled = true;
+    }
     this.logger.log('Initialized', this.options);
   }
 
@@ -88,7 +93,11 @@ export class ElectronInfo {
   async getAllReleases(formatted: true, colored?: boolean): Promise<string>;
   async getAllReleases(formatted?: boolean, colored?: boolean): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting all releases:', {colored, formatted});
-    const allReleases = await this.getReleases();
+    let allReleases = await this.getReleases();
+    if (this.options.limit) {
+      this.logger.log('Limiting found versions', {limit: this.options.limit});
+      allReleases = allReleases.slice(0, this.options.limit);
+    }
     return formatted ? this.formatReleases(allReleases, colored) : allReleases;
   }
 
@@ -179,7 +188,7 @@ export class ElectronInfo {
     const {data: releases} = await axios.get<RawReleaseInfo[]>(downloadUrl);
 
     this.logger.info(
-      'Data from server:',
+      'Received data from server:',
       `${inspect(releases, {breakLength: Infinity, sorted: true})
         .toString()
         .slice(0, 40)}...`

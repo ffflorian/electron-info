@@ -25,7 +25,6 @@
     "@types/node": "~12",
     "@types/semver": "6.0.1",
     "@types/table": "4.0.6",
-    "cross-env": "5.2.0",
     "fs-extra": "8.1.0",
     "husky": "3.0.4",
     "jasmine": "3.4.0",
@@ -88,7 +87,7 @@
     "lint:ts:tests": "tslint --project tsconfig.jasmine.json",
     "prettier": "prettier \"*.{json,md}\"",
     "release": "semantic-release",
-    "start": "cross-env NODE_DEBUG=\"electron-info/*\" ts-node src/cli.ts",
+    "start": "ts-node src/cli.ts -d",
     "test": "ts-node -P tsconfig.jasmine.json node_modules/.bin/jasmine"
   },
   "version": "1.9.0"
