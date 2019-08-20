@@ -1,3 +1,9 @@
+# [1.11.0](https://github.com/ffflorian/electron-info/compare/v1.10.0...v1.11.0) (2019-08-20)
+
+### Features
+
+- Load releases from local path, logging ([#29](https://github.com/ffflorian/electron-info/issues/29)) ([302ba69](https://github.com/ffflorian/electron-info/commit/302ba69))
+
 # [1.10.0](https://github.com/ffflorian/electron-info/compare/v1.9.0...v1.10.0) (2019-08-20)
 
 ### Features
