@@ -22,6 +22,7 @@ Allowed version argument inputs:
 
 Options:
   -f, --force           Force downloading the latest release file
+  -l, --limit <number>  Limit output of releases
   -r, --raw             Output raw JSON
   --no-colors           Don't use colors for displaying
   --no-prereleases      Don't include Electron prereleases

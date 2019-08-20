@@ -31,13 +31,18 @@ export interface RawReleaseInfo {
 }
 
 export interface Options {
-  /** Default is `true`. */
+  /** If Electron prereleases should be included. Default is `true`. */
   electronPrereleases?: boolean;
-  /** Default is `false`. */
+  /** Force downloading the latest release file. Default is `false`. */
   forceUpdate?: boolean;
+  /** Limit output of releases. Everything below 1 will be treated as no limit. Default: no limit */
+  limit?: number;
   /** Default is https://unpkg.com/electron-releases@latest/lite.json. */
   releasesUrl?: string;
-  /** Will be created if not defined. */
+  /**
+   * If a certain temporary directory should be used.
+   * The system's temporary directory will be used if not defined.
+   */
   tempDirectory?: string;
 }
 
@@ -47,6 +52,7 @@ const {promises: fsAsync} = fs;
 const defaultOptions: Required<Options> = {
   electronPrereleases: true,
   forceUpdate: false,
+  limit: 0,
   releasesUrl: 'https://unpkg.com/electron-releases@latest/lite.json',
   tempDirectory: '',
 };
@@ -66,11 +72,12 @@ export class ElectronInfo {
 
   constructor(options?: Options) {
     this.options = {...defaultOptions, ...options};
+    this.options.limit = Math.max(0, this.options.limit);
   }
 
-  async getAllReleases(formatted?: false): Promise<RawReleaseInfo[]>;
-  async getAllReleases(formatted: true, colored?: boolean): Promise<string>;
-  async getAllReleases(formatted?: boolean, colored?: boolean): Promise<RawReleaseInfo[] | string> {
+  async getAllReleases(formatted?: false, colored?: false, limit?: number): Promise<RawReleaseInfo[]>;
+  async getAllReleases(formatted: true, colored?: boolean, limit?: number): Promise<string>;
+  async getAllReleases(formatted?: boolean, colored?: boolean, limit?: number): Promise<RawReleaseInfo[] | string> {
     const allReleases = await this.downloadReleases();
     return formatted ? this.formatReleases(allReleases, colored) : allReleases;
   }
@@ -159,9 +166,14 @@ export class ElectronInfo {
       return JSON.parse(rawData);
     }
 
-    const {data} = await axios.get(this.options.releasesUrl);
-    await fsAsync.writeFile(tempFile, JSON.stringify(data));
-    return data;
+    const {data: releases} = await axios.get<RawReleaseInfo[]>(this.options.releasesUrl);
+
+    if (!Array.isArray(releases)) {
+      throw new Error('Invalid data received from server');
+    }
+
+    await fsAsync.writeFile(tempFile, JSON.stringify(releases));
+    return releases;
   }
 
   private async fileIsReadable(filePath: string): Promise<boolean> {
@@ -238,6 +250,10 @@ export class ElectronInfo {
           : satisfiesVersion(release.deps![key], inputVersion);
       })
       .map(release => (key === 'electron' ? release.version : release.deps![key]));
+
+    if (this.options.limit) {
+      dependencyVersions = dependencyVersions.slice(0, this.options.limit);
+    }
 
     return dependencyVersions;
   }

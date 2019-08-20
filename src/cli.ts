@@ -15,6 +15,7 @@ program
     `${description}\n\nAllowed version argument inputs:\n  - SemVer versions (e.g. "~7")\n  - npm dist tags (e.g. "5-0-x", only Electron)\n  - "all"`
   )
   .option('-f, --force', 'Force downloading the latest release file')
+  .option('-l, --limit <number>', 'Limit output of releases')
   .option('-r, --raw', 'Output raw JSON')
   .option('--no-colors', `Don't use colors for displaying`)
   .option('--no-prereleases', `Don't include Electron prereleases`)
@@ -31,11 +32,10 @@ program
       process.exit();
     }
     try {
-      const releases = await new ElectronInfo({electronPrereleases: parent.prereleases}).getElectronReleases(
-        version,
-        !parent.raw as any,
-        parent.colors
-      );
+      const releases = await new ElectronInfo({
+        ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
+        ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
+      }).getElectronReleases(version, !parent.raw as any, parent.colors);
       console.log(releases);
     } catch (error) {
       console.error(error);
@@ -54,12 +54,10 @@ for (const dependency in SupportedDependencies) {
         process.exit();
       }
       try {
-        const releases = await new ElectronInfo({electronPrereleases: parent.prereleases}).getDependencyReleases(
-          dependency as keyof RawDeps,
-          version,
-          !parent.raw as any,
-          parent.colors
-        );
+        const releases = await new ElectronInfo({
+          ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
+          ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
+        }).getDependencyReleases(dependency as keyof RawDeps, version, !parent.raw as any, parent.colors);
         console.log(releases);
       } catch (error) {
         console.error(error);
@@ -72,10 +70,10 @@ program
   .description('Get informations about all releases')
   .action(async ({parent}) => {
     try {
-      const releases = await new ElectronInfo({electronPrereleases: parent.prereleases}).getAllReleases(
-        !parent.raw as any,
-        parent.colors
-      );
+      const releases = await new ElectronInfo({
+        ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
+        ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
+      }).getAllReleases(!parent.raw as any, parent.colors);
       console.log(releases);
     } catch (error) {
       console.error(error);
