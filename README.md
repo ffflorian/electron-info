@@ -38,7 +38,6 @@ Commands:
   v8|v [version]        Get informations about a v8 release
   zlib|z [version]      Get informations about a zlib release
   all                   Get informations about all releases
-Done in 1.86s.
 ```
 
 ### Examples
