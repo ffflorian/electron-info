@@ -7,17 +7,24 @@ import {ElectronInfo, RawDeps, SupportedDependencies} from './ElectronInfo';
 const packageJsonPath = path.join(__dirname, '../package.json');
 const {description, name, version} = require(packageJsonPath);
 
-const needsN = (name: string) => `a${/^[aeoui]/.test(name) ? 'n' : ''} ${name}`;
+const needsLetterN = (name: string) => `a${/^[aeoui]/.test(name) ? 'n' : ''} ${name}`;
+let matchedCommand = false;
 
 program
   .name(name)
   .description(
-    `${description}\n\nAllowed version argument inputs:\n  - SemVer versions (e.g. "~7")\n  - npm dist tags (e.g. "5-0-x", only Electron)\n  - "all"`
+    `${description}
+
+Allowed version argument inputs:
+  - SemVer versions (e.g. "~7")
+  - npm dist tags (e.g. "5-0-x", only Electron)
+  - "all"`
   )
+  .option('-d, --debug', 'Enable debug logging')
   .option('-f, --force', 'Force downloading the latest release file')
   .option('-l, --limit <number>', 'Limit output of releases')
   .option('-r, --raw', 'Output raw JSON')
-  .option('-s, --source <url>', 'Use a custom releases source URL')
+  .option('-s, --source <url>', 'Use a custom releases source URL or path')
   .option('--no-colors', `Don't use colors for displaying`)
   .option('--no-prereleases', `Don't include Electron prereleases`)
   .version(version, '-v, --version');
@@ -28,12 +35,14 @@ program
   .description('Get informations about an Electron release')
   .arguments('[version]')
   .action(async (version, {parent}) => {
+    matchedCommand = true;
     if (!version) {
       program.outputHelp();
       process.exit();
     }
     try {
       const releases = await new ElectronInfo({
+        ...(parent.debug && {debug: true}),
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
@@ -48,15 +57,17 @@ for (const dependency in SupportedDependencies) {
   program
     .command(dependency)
     .alias(dependency[0])
-    .description(`Get informations about ${needsN(dependency)} release`)
+    .description(`Get informations about ${needsLetterN(dependency)} release`)
     .arguments('[version]')
     .action(async (version, {parent}) => {
+      matchedCommand = true;
       if (!version) {
         program.outputHelp();
         process.exit();
       }
       try {
         const releases = await new ElectronInfo({
+          ...(parent.debug && {debug: true}),
           ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
           ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
           ...(parent.source && {releasesUrl: parent.source}),
@@ -69,11 +80,14 @@ for (const dependency in SupportedDependencies) {
 }
 
 program
-  .command('all')
+  .command('all', {isDefault: true})
+  .alias('a')
   .description('Get informations about all releases')
   .action(async ({parent}) => {
+    matchedCommand = true;
     try {
       const releases = await new ElectronInfo({
+        ...(parent.debug && {debug: true}),
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
@@ -86,6 +100,7 @@ program
 
 program.parse(process.argv);
 
-if (!program.args.length) {
+if (!program.args.length || !matchedCommand) {
+  console.log('Invalid or no command specified.');
   program.help();
 }

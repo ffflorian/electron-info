@@ -21,10 +21,11 @@ Allowed version argument inputs:
   - "all"
 
 Options:
+  -d, --debug           Enable debug logging
   -f, --force           Force downloading the latest release file
   -l, --limit <number>  Limit output of releases
   -r, --raw             Output raw JSON
-  -s, --source <url>    Use a custom releases source URL
+  -s, --source <url>    Use a custom releases source URL or path
   --no-colors           Don't use colors for displaying
   --no-prereleases      Don't include Electron prereleases
   -v, --version         output the version number

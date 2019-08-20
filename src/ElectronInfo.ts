@@ -1,11 +1,14 @@
 import axios from 'axios';
 import Chalk from 'chalk';
 import * as fs from 'fs';
+import * as logdown from 'logdown';
 import * as moment from 'moment';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
 import {table as createTable} from 'table';
+import * as url from 'url';
+import {inspect} from 'util';
 
 export interface RawDeps {
   chrome: string;
@@ -31,17 +34,18 @@ export interface RawReleaseInfo {
 }
 
 export interface Options {
-  /** If Electron prereleases should be included. Default is `true`. */
+  /** Enable debug logging. Default: `false`. */
+  debug?: boolean;
+  /** If Electron prereleases should be included. Default: `true`. */
   electronPrereleases?: boolean;
-  /** Force downloading the latest release file. Default is `false`. */
+  /** Force downloading the latest release file. Default: `false`. */
   forceUpdate?: boolean;
-  /** Limit output of releases. Everything below 1 will be treated as no limit. Default: no limit */
+  /** Limit output of releases. Everything below 1 will be treated as no limit. Default: 0. */
   limit?: number;
-  /** Default is https://unpkg.com/electron-releases@latest/lite.json. */
+  /** Can be a URL or a local path. Default: https://unpkg.com/electron-releases@latest/lite.json. */
   releasesUrl?: string;
   /**
-   * If a certain temporary directory should be used.
-   * The system's temporary directory will be used if not defined.
+   * Use a custom temporary directory. If not defined, the system's temporary directory will be used.
    */
   tempDirectory?: string;
 }
@@ -50,6 +54,7 @@ const {bold} = Chalk;
 const {promises: fsAsync} = fs;
 
 const defaultOptions: Required<Options> = {
+  debug: false,
   electronPrereleases: true,
   forceUpdate: false,
   limit: 0,
@@ -68,17 +73,31 @@ export const SupportedDependencies: RawDeps = {
 };
 
 export class ElectronInfo {
+  private readonly logger: logdown.Logger;
   private readonly options: Required<Options>;
 
   constructor(options?: Options) {
     this.options = {...defaultOptions, ...options};
     this.options.limit = Math.max(0, this.options.limit);
+    this.logger = logdown('electron-info/ElectronInfo', {
+      logger: console,
+      markdown: false,
+    });
+    if (this.options.debug) {
+      this.logger.state.isEnabled = true;
+    }
+    this.logger.log('Initialized', this.options);
   }
 
   async getAllReleases(formatted?: false): Promise<RawReleaseInfo[]>;
   async getAllReleases(formatted: true, colored?: boolean): Promise<string>;
   async getAllReleases(formatted?: boolean, colored?: boolean): Promise<RawReleaseInfo[] | string> {
-    const allReleases = await this.downloadReleases();
+    this.logger.log('Getting all releases:', {colored, formatted});
+    let allReleases = await this.getReleases();
+    if (this.options.limit) {
+      this.logger.log('Limiting found versions', {limit: this.options.limit});
+      allReleases = allReleases.slice(0, this.options.limit);
+    }
     return formatted ? this.formatReleases(allReleases, colored) : allReleases;
   }
 
@@ -95,8 +114,9 @@ export class ElectronInfo {
     formatted?: boolean,
     colored?: boolean
   ): Promise<RawReleaseInfo[] | string> {
-    const dependencyVersions = await this.getVersions(dependency, version);
+    this.logger.log('Getting dependency releases:', {colored, dependency, formatted, version});
     const allReleases = await this.getAllReleases(false);
+    const dependencyVersions = await this.getVersions(allReleases, dependency, version);
     const filteredReleases = allReleases.filter(
       release => release.deps && dependencyVersions.includes(release.deps[dependency])
     );
@@ -111,18 +131,22 @@ export class ElectronInfo {
     formatted?: boolean,
     colored?: boolean
   ): Promise<RawReleaseInfo[] | string> {
-    const electronVersions = await this.getVersions('electron', version);
+    this.logger.log('Getting Electron releases:', {colored, formatted, version});
+
     const allReleases = await this.getAllReleases(false);
+    const electronVersions = await this.getVersions(allReleases, 'electron', version);
     const filteredReleases = allReleases.filter(release => electronVersions.includes(release.version));
 
     return formatted ? this.formatReleases(filteredReleases, colored) : filteredReleases;
   }
 
   private buildFoundString(releases: RawReleaseInfo[]): string {
+    this.logger.log('Building found string:', {releasesLength: releases.length});
     return `Found ${releases.length} release${releases.length === 1 ? '' : 's'}.`;
   }
 
   private buildRawTables(releases: RawReleaseInfo[], colored?: boolean): string[][][] {
+    this.logger.log('Building raw tables:', {releasesLength: releases.length, colored});
     const coloredOrNot = (text: string, style: typeof Chalk): string => (colored ? style(text) : text);
 
     return releases.map(release => {
@@ -151,28 +175,29 @@ export class ElectronInfo {
 
   private async createTempDir(): Promise<string> {
     if (!this.options.tempDirectory) {
+      this.logger.log('Creating new temp directory');
       this.options.tempDirectory = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'electron-info-'));
+      this.logger.log('Created temp directory:', {tempDirectory: this.options.tempDirectory});
     }
 
     return this.options.tempDirectory;
   }
 
-  private async downloadReleases(): Promise<RawReleaseInfo[]> {
-    const tempDirectory = await this.createTempDir();
-    const tempFile = path.join(tempDirectory, 'latest.json');
+  private async downloadReleasesFile(downloadUrl: string, targetFile: string): Promise<RawReleaseInfo[]> {
+    this.logger.log('Downloading releases file:', {downloadUrl, targetFile});
+    const {data: releases} = await axios.get<RawReleaseInfo[]>(downloadUrl);
 
-    if ((await this.fileIsReadable(tempFile)) && !this.options.forceUpdate) {
-      const rawData = await fsAsync.readFile(tempFile, 'utf8');
-      return JSON.parse(rawData);
-    }
-
-    const {data: releases} = await axios.get<RawReleaseInfo[]>(this.options.releasesUrl);
-
+    this.logger.info(
+      'Received data from server:',
+      `${inspect(releases, {breakLength: Infinity, sorted: true})
+        .toString()
+        .slice(0, 40)}...`
+    );
     if (!Array.isArray(releases)) {
       throw new Error('Invalid data received from server');
     }
 
-    await fsAsync.writeFile(tempFile, JSON.stringify(releases));
+    await fsAsync.writeFile(targetFile, JSON.stringify(releases));
     return releases;
   }
 
@@ -181,11 +206,13 @@ export class ElectronInfo {
       await fsAsync.access(filePath, fs.constants.F_OK | fs.constants.R_OK);
       return true;
     } catch (error) {
+      this.logger.log('File is not readable:', {errorMessage: error.message});
       return false;
     }
   }
 
   private formatDependencyReleases(releases: RawReleaseInfo[], colored?: boolean): string {
+    this.logger.log('Formatting dependency releases:', {colored, releasesLength: releases.length});
     releases = releases.filter(release => !!release.deps);
 
     if (!releases.length) {
@@ -200,6 +227,7 @@ export class ElectronInfo {
   }
 
   private formatReleases(releases: RawReleaseInfo[], colored?: boolean): string {
+    this.logger.log('Formatting releases:', {colored, releasesLength: releases.length});
     if (!releases.length) {
       return this.buildFoundString(releases);
     }
@@ -211,7 +239,35 @@ export class ElectronInfo {
     return `${joinedReleases}\n${this.buildFoundString(releases)}`;
   }
 
-  private async getVersions(key: 'electron' | keyof RawDeps, inputVersion: string): Promise<string[]> {
+  private async getReleases(): Promise<RawReleaseInfo[]> {
+    this.logger.log('Parsing releases URL', {releasesUrl: this.options.releasesUrl});
+    const parsedUrl = url.parse(this.options.releasesUrl, false);
+    if (!parsedUrl.href) {
+      throw new Error('Invalid releases URL provided');
+    }
+
+    if (!parsedUrl.href.startsWith('localhost') && !parsedUrl.protocol) {
+      this.logger.log('Releases URL points to a local file:', {releasesUrl: this.options.releasesUrl});
+      return this.loadReleasesFile(path.resolve(this.options.releasesUrl));
+    }
+
+    const tempDirectory = await this.createTempDir();
+    const tempFile = path.join(tempDirectory, 'latest.json');
+
+    if ((await this.fileIsReadable(tempFile)) && !this.options.forceUpdate) {
+      this.logger.log('Found a local copy of the releases file:', {tempFile});
+      return this.loadReleasesFile(tempFile);
+    }
+
+    return this.downloadReleasesFile(this.options.releasesUrl, tempFile);
+  }
+
+  private async getVersions(
+    releases: RawReleaseInfo[],
+    key: 'electron' | keyof RawDeps,
+    inputVersion: string
+  ): Promise<string[]> {
+    this.logger.log('Getting versions:', {inputVersion, key});
     const satisfiesVersion = (dependencyVersion: string, inputVersion: string) => {
       const dependencyVersionClean = semver.clean(dependencyVersion, {includePrerelease: true, loose: true}) || '';
       return semver.satisfies(dependencyVersionClean, inputVersion, {
@@ -221,9 +277,9 @@ export class ElectronInfo {
     };
 
     let dependencyVersions: string[] = [];
-    let releases = await this.getAllReleases();
 
     if (!this.options.electronPrereleases) {
+      this.logger.log('Removing electron prereleases from found versions');
       releases = releases.filter(release => semver.prerelease(release.version) === null);
     }
 
@@ -252,9 +308,16 @@ export class ElectronInfo {
       .map(release => (key === 'electron' ? release.version : release.deps![key]));
 
     if (this.options.limit) {
+      this.logger.log('Limiting found versions', {limit: this.options.limit});
       dependencyVersions = dependencyVersions.slice(0, this.options.limit);
     }
 
     return dependencyVersions;
+  }
+
+  private async loadReleasesFile(localPath: string): Promise<RawReleaseInfo[]> {
+    this.logger.log('Loading local releases file:', {localPath});
+    const rawData = await fsAsync.readFile(localPath, 'utf8');
+    return JSON.parse(rawData);
   }
 }
