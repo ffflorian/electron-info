@@ -1,3 +1,9 @@
+# [1.9.0](https://github.com/ffflorian/electron-info/compare/v1.8.0...v1.9.0) (2019-08-20)
+
+### Features
+
+- Add "published on" field ([#27](https://github.com/ffflorian/electron-info/issues/27)) ([a915d37](https://github.com/ffflorian/electron-info/commit/a915d37))
+
 # [1.8.0](https://github.com/ffflorian/electron-info/compare/v1.7.0...v1.8.0) (2019-07-26)
 
 ### Features
