@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Chalk from 'chalk';
 import * as fs from 'fs';
+import * as moment from 'moment';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
@@ -119,9 +120,10 @@ export class ElectronInfo {
 
     return releases.map(release => {
       const electronVersion = `${release.version}${release.prerelease ? ' (prerelease)' : ''}`;
+      const releaseDate = moment(release.published_at).format('L');
       const table = [
-        [coloredOrNot('Dependency', bold), coloredOrNot('Version', bold)],
         [coloredOrNot('Electron', bold), electronVersion],
+        [coloredOrNot('Published on', bold), releaseDate],
       ];
 
       if (release.deps) {
@@ -131,7 +133,7 @@ export class ElectronInfo {
           [coloredOrNot('OpenSSL', bold.blue), release.deps.openssl],
           [coloredOrNot('Modules', bold.yellow), release.deps.modules],
           [coloredOrNot('uv', bold.cyan), release.deps.uv],
-          [coloredOrNot('V8', bold.gray), release.deps.v8],
+          [coloredOrNot('V8', bold.rgb(150, 150, 150)), release.deps.v8],
           [coloredOrNot('zlib', bold.magenta), release.deps.zlib]
         );
       }
