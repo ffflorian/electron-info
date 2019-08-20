@@ -1,3 +1,9 @@
+# [1.10.0](https://github.com/ffflorian/electron-info/compare/v1.9.0...v1.10.0) (2019-08-20)
+
+### Features
+
+- Add limit and source options ([#28](https://github.com/ffflorian/electron-info/issues/28)) ([b0ca6bf](https://github.com/ffflorian/electron-info/commit/b0ca6bf))
+
 # [1.9.0](https://github.com/ffflorian/electron-info/compare/v1.8.0...v1.9.0) (2019-08-20)
 
 ### Features
