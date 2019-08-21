@@ -40,7 +40,7 @@ describe('ElectronInfo', () => {
         tempDirectory: tempDir,
       }).getElectronReleases('^5');
 
-      expect(result.length).toBe(27);
+      expect(result.length).toBe(29);
     });
 
     it('Parses dist tags', async () => {
@@ -80,7 +80,7 @@ describe('ElectronInfo', () => {
         tempDirectory: tempDir,
       }).getDependencyReleases('chrome', '~66');
 
-      expect(result.length).toBe(55);
+      expect(result.length).toBe(56);
     });
 
     it('Returns nothing for invalid versions', async () => {
