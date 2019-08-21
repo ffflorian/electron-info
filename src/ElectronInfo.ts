@@ -93,17 +93,9 @@ export class ElectronInfo {
   async getAllReleases(formatted: true, colored?: boolean): Promise<string>;
   async getAllReleases(formatted?: boolean, colored?: boolean): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting all releases:', {colored, formatted});
-    let allReleases = await this.getReleases();
-    if (this.options.limit) {
-      const slicedArray = allReleases.slice(0, this.options.limit);
-      this.logger.log('Limiting found versions', {
-        after: slicedArray.length,
-        before: allReleases.length,
-        limit: this.options.limit,
-      });
-      allReleases = slicedArray;
-    }
-    return formatted ? this.formatReleases(allReleases, colored) : allReleases;
+    const allReleases = await this.getReleases();
+    const limitedReleases = this.limitReleases(allReleases, this.options.limit);
+    return formatted ? this.formatReleases(limitedReleases, colored) : limitedReleases;
   }
 
   async getDependencyReleases(dependency: keyof RawDeps, version: string, formatted?: false): Promise<RawReleaseInfo[]>;
@@ -126,7 +118,8 @@ export class ElectronInfo {
       release => release.deps && dependencyVersions.includes(release.deps[dependency])
     );
 
-    return formatted ? this.formatDependencyReleases(filteredReleases, colored) : filteredReleases;
+    const limitedReleases = this.limitReleases(filteredReleases, this.options.limit);
+    return formatted ? this.formatDependencyReleases(limitedReleases, colored) : limitedReleases;
   }
 
   async getElectronReleases(version: string, formatted?: false): Promise<RawReleaseInfo[]>;
@@ -142,7 +135,8 @@ export class ElectronInfo {
     const electronVersions = await this.getVersions(allReleases, 'electron', version);
     const filteredReleases = allReleases.filter(release => electronVersions.includes(release.version));
 
-    return formatted ? this.formatReleases(filteredReleases, colored) : filteredReleases;
+    const limitedReleases = this.limitReleases(filteredReleases, this.options.limit);
+    return formatted ? this.formatReleases(limitedReleases, colored) : limitedReleases;
   }
 
   private buildFoundString(releases: RawReleaseInfo[]): string {
@@ -193,7 +187,7 @@ export class ElectronInfo {
     const {data: releases} = await axios.get<RawReleaseInfo[]>(downloadUrl);
 
     this.logger.info(
-      'Received data from server:',
+      '[downloadReleasesFile] Received data from server:',
       `${inspect(releases, {breakLength: Infinity, sorted: true})
         .toString()
         .slice(0, 40)}...`
@@ -312,17 +306,20 @@ export class ElectronInfo {
       })
       .map(release => (key === 'electron' ? release.version : release.deps![key]));
 
-    if (this.options.limit) {
-      const slicedArray = dependencyVersions.slice(0, this.options.limit);
+    return dependencyVersions;
+  }
+
+  private limitReleases(releases: RawReleaseInfo[], limit?: number): RawReleaseInfo[] {
+    if (limit) {
+      const slicedArray = releases.slice(0, limit);
       this.logger.log('Limiting found versions', {
         after: slicedArray.length,
-        before: dependencyVersions.length,
-        limit: this.options.limit,
+        before: releases.length,
+        limit,
       });
-      dependencyVersions = slicedArray;
+      return slicedArray;
     }
-
-    return dependencyVersions;
+    return releases;
   }
 
   private async loadReleasesFile(localPath: string): Promise<RawReleaseInfo[]> {
