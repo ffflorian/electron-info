@@ -1,3 +1,9 @@
+## [1.11.2](https://github.com/ffflorian/electron-info/compare/v1.11.1...v1.11.2) (2019-08-21)
+
+### Bug Fixes
+
+- Correctly parse all releases URLs ([#32](https://github.com/ffflorian/electron-info/issues/32)) ([e294a8f](https://github.com/ffflorian/electron-info/commit/e294a8f))
+
 ## [1.11.1](https://github.com/ffflorian/electron-info/compare/v1.11.0...v1.11.1) (2019-08-21)
 
 ### Bug Fixes
