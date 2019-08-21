@@ -4,11 +4,11 @@ import * as fs from 'fs';
 import * as logdown from 'logdown';
 import * as moment from 'moment';
 import * as os from 'os';
+import parsePath = require('parse-path');
 import * as path from 'path';
 import * as semver from 'semver';
 import {table as createTable} from 'table';
 import {inspect} from 'util';
-const parsePath = require('parse-path');
 
 export interface RawDeps {
   chrome: string;
@@ -241,7 +241,7 @@ export class ElectronInfo {
 
   private async getReleases(): Promise<RawReleaseInfo[]> {
     this.logger.log('Parsing releases URL', {releasesUrl: this.options.releasesUrl});
-    const parsedUrl = parsePath(this.options.releasesUrl, false);
+    const parsedUrl = parsePath(this.options.releasesUrl);
     if (!parsedUrl.href) {
       throw new Error('Invalid releases URL provided');
     }
