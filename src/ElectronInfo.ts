@@ -187,7 +187,7 @@ export class ElectronInfo {
     const {data: releases} = await axios.get<RawReleaseInfo[]>(downloadUrl);
 
     this.logger.info(
-      '[downloadReleasesFile] Received data from server:',
+      'Received data from server:',
       `${inspect(releases, {breakLength: Infinity, sorted: true})
         .toString()
         .slice(0, 40)}...`
