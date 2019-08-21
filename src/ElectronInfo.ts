@@ -7,7 +7,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
 import {table as createTable} from 'table';
-import * as url from 'url';
+const parsePath = require('parse-path');
 import {inspect} from 'util';
 
 export interface RawDeps {
@@ -241,15 +241,17 @@ export class ElectronInfo {
 
   private async getReleases(): Promise<RawReleaseInfo[]> {
     this.logger.log('Parsing releases URL', {releasesUrl: this.options.releasesUrl});
-    const parsedUrl = url.parse(this.options.releasesUrl, false);
+    const parsedUrl = parsePath(this.options.releasesUrl, false);
     if (!parsedUrl.href) {
       throw new Error('Invalid releases URL provided');
     }
 
-    if (!parsedUrl.href.startsWith('localhost') && !parsedUrl.protocol) {
+    if (parsedUrl.protocol === 'file') {
       this.logger.log('Releases URL points to a local file:', {releasesUrl: this.options.releasesUrl});
       return this.loadReleasesFile(path.resolve(this.options.releasesUrl));
     }
+
+    this.logger.log('Releases URL points to a URL:', {releasesUrl: this.options.releasesUrl});
 
     const tempDirectory = await this.createTempDir();
     const tempFile = path.join(tempDirectory, 'latest.json');

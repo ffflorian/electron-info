@@ -9,6 +9,7 @@
     "commander": "3.0.0",
     "logdown": "3.2.8",
     "moment": "2.24.0",
+    "parse-path": "4.0.1",
     "semver": "6.3.0",
     "table": "5.4.6"
   },
