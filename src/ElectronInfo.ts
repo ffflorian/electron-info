@@ -7,8 +7,8 @@ import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
 import {table as createTable} from 'table';
-const parsePath = require('parse-path');
 import {inspect} from 'util';
+const parsePath = require('parse-path');
 
 export interface RawDeps {
   chrome: string;
