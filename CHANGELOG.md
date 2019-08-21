@@ -1,3 +1,9 @@
+## [1.11.1](https://github.com/ffflorian/electron-info/compare/v1.11.0...v1.11.1) (2019-08-21)
+
+### Bug Fixes
+
+- Apply limit only once ([#31](https://github.com/ffflorian/electron-info/issues/31)) ([63f89d4](https://github.com/ffflorian/electron-info/commit/63f89d4))
+
 # [1.11.0](https://github.com/ffflorian/electron-info/compare/v1.10.0...v1.11.0) (2019-08-20)
 
 ### Features
