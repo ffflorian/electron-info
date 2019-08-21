@@ -95,8 +95,13 @@ export class ElectronInfo {
     this.logger.log('Getting all releases:', {colored, formatted});
     let allReleases = await this.getReleases();
     if (this.options.limit) {
-      this.logger.log('Limiting found versions', {limit: this.options.limit});
-      allReleases = allReleases.slice(0, this.options.limit);
+      const slicedArray = allReleases.slice(0, this.options.limit);
+      this.logger.log('Limiting found versions', {
+        after: slicedArray.length,
+        before: allReleases.length,
+        limit: this.options.limit,
+      });
+      allReleases = slicedArray;
     }
     return formatted ? this.formatReleases(allReleases, colored) : allReleases;
   }
@@ -115,7 +120,7 @@ export class ElectronInfo {
     colored?: boolean
   ): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting dependency releases:', {colored, dependency, formatted, version});
-    const allReleases = await this.getAllReleases(false);
+    const allReleases = await this.getReleases();
     const dependencyVersions = await this.getVersions(allReleases, dependency, version);
     const filteredReleases = allReleases.filter(
       release => release.deps && dependencyVersions.includes(release.deps[dependency])
@@ -133,7 +138,7 @@ export class ElectronInfo {
   ): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting Electron releases:', {colored, formatted, version});
 
-    const allReleases = await this.getAllReleases(false);
+    const allReleases = await this.getReleases();
     const electronVersions = await this.getVersions(allReleases, 'electron', version);
     const filteredReleases = allReleases.filter(release => electronVersions.includes(release.version));
 
@@ -308,8 +313,13 @@ export class ElectronInfo {
       .map(release => (key === 'electron' ? release.version : release.deps![key]));
 
     if (this.options.limit) {
-      this.logger.log('Limiting found versions', {limit: this.options.limit});
-      dependencyVersions = dependencyVersions.slice(0, this.options.limit);
+      const slicedArray = dependencyVersions.slice(0, this.options.limit);
+      this.logger.log('Limiting found versions', {
+        after: slicedArray.length,
+        before: dependencyVersions.length,
+        limit: this.options.limit,
+      });
+      dependencyVersions = slicedArray;
     }
 
     return dependencyVersions;
