@@ -91,5 +91,17 @@ describe('ElectronInfo', () => {
 
       expect(result.length).toBe(0);
     });
+
+    it('Limits releases', async () => {
+      const limit = 2;
+
+      const result = await new ElectronInfo({
+        limit,
+        releasesUrl: mockUrl,
+        tempDirectory: tempDir,
+      }).getDependencyReleases('chrome', 'all');
+
+      expect(result.length).toBe(limit);
+    });
   });
 });

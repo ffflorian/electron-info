@@ -93,12 +93,9 @@ export class ElectronInfo {
   async getAllReleases(formatted: true, colored?: boolean): Promise<string>;
   async getAllReleases(formatted?: boolean, colored?: boolean): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting all releases:', {colored, formatted});
-    let allReleases = await this.getReleases();
-    if (this.options.limit) {
-      this.logger.log('Limiting found versions', {limit: this.options.limit});
-      allReleases = allReleases.slice(0, this.options.limit);
-    }
-    return formatted ? this.formatReleases(allReleases, colored) : allReleases;
+    const allReleases = await this.getReleases();
+    const limitedReleases = this.limitReleases(allReleases, this.options.limit);
+    return formatted ? this.formatReleases(limitedReleases, colored) : limitedReleases;
   }
 
   async getDependencyReleases(dependency: keyof RawDeps, version: string, formatted?: false): Promise<RawReleaseInfo[]>;
@@ -115,13 +112,14 @@ export class ElectronInfo {
     colored?: boolean
   ): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting dependency releases:', {colored, dependency, formatted, version});
-    const allReleases = await this.getAllReleases(false);
+    const allReleases = await this.getReleases();
     const dependencyVersions = await this.getVersions(allReleases, dependency, version);
     const filteredReleases = allReleases.filter(
       release => release.deps && dependencyVersions.includes(release.deps[dependency])
     );
 
-    return formatted ? this.formatDependencyReleases(filteredReleases, colored) : filteredReleases;
+    const limitedReleases = this.limitReleases(filteredReleases, this.options.limit);
+    return formatted ? this.formatDependencyReleases(limitedReleases, colored) : limitedReleases;
   }
 
   async getElectronReleases(version: string, formatted?: false): Promise<RawReleaseInfo[]>;
@@ -133,11 +131,12 @@ export class ElectronInfo {
   ): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting Electron releases:', {colored, formatted, version});
 
-    const allReleases = await this.getAllReleases(false);
+    const allReleases = await this.getReleases();
     const electronVersions = await this.getVersions(allReleases, 'electron', version);
     const filteredReleases = allReleases.filter(release => electronVersions.includes(release.version));
 
-    return formatted ? this.formatReleases(filteredReleases, colored) : filteredReleases;
+    const limitedReleases = this.limitReleases(filteredReleases, this.options.limit);
+    return formatted ? this.formatReleases(limitedReleases, colored) : limitedReleases;
   }
 
   private buildFoundString(releases: RawReleaseInfo[]): string {
@@ -189,9 +188,10 @@ export class ElectronInfo {
 
     this.logger.info(
       'Received data from server:',
-      `${inspect(releases, {breakLength: Infinity, sorted: true})
+      inspect(releases)
         .toString()
-        .slice(0, 40)}...`
+        .slice(0, 40),
+      '...'
     );
     if (!Array.isArray(releases)) {
       throw new Error('Invalid data received from server');
@@ -307,12 +307,20 @@ export class ElectronInfo {
       })
       .map(release => (key === 'electron' ? release.version : release.deps![key]));
 
-    if (this.options.limit) {
-      this.logger.log('Limiting found versions', {limit: this.options.limit});
-      dependencyVersions = dependencyVersions.slice(0, this.options.limit);
-    }
-
     return dependencyVersions;
+  }
+
+  private limitReleases(releases: RawReleaseInfo[], limit?: number): RawReleaseInfo[] {
+    if (limit) {
+      const slicedArray = releases.slice(0, limit);
+      this.logger.log('Limiting found versions', {
+        after: slicedArray.length,
+        before: releases.length,
+        limit,
+      });
+      return slicedArray;
+    }
+    return releases;
   }
 
   private async loadReleasesFile(localPath: string): Promise<RawReleaseInfo[]> {
