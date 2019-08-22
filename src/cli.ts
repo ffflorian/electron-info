@@ -44,6 +44,7 @@ program
     try {
       const electronInfo = new ElectronInfo({
         ...(parent.debug && {debug: true}),
+        ...(parent.force && {forceUpdate: true}),
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
@@ -75,6 +76,7 @@ for (const dependency in SupportedDependencies) {
       try {
         const electronInfo = new ElectronInfo({
           ...(parent.debug && {debug: true}),
+          ...(parent.force && {forceUpdate: true}),
           ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
           ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
           ...(parent.source && {releasesUrl: parent.source}),
@@ -100,6 +102,7 @@ program
     try {
       const electronInfo = new ElectronInfo({
         ...(parent.debug && {debug: true}),
+        ...(parent.force && {forceUpdate: true}),
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
