@@ -50,8 +50,8 @@ program
       });
 
       const releases = parent.raw
-        ? electronInfo.getElectronReleases(version)
-        : electronInfo.getElectronReleases(version, true, parent.colors);
+        ? await electronInfo.getElectronReleases(version)
+        : await electronInfo.getElectronReleases(version, true, parent.colors);
       console.log(releases);
     } catch (error) {
       console.error(error);
@@ -81,8 +81,8 @@ for (const dependency in SupportedDependencies) {
         });
 
         const releases = parent.raw
-          ? electronInfo.getDependencyReleases(dependency as keyof RawDeps, version)
-          : electronInfo.getDependencyReleases(dependency as keyof RawDeps, version, true, parent.colors);
+          ? await electronInfo.getDependencyReleases(dependency as keyof RawDeps, version)
+          : await electronInfo.getDependencyReleases(dependency as keyof RawDeps, version, true, parent.colors);
         console.log(releases);
       } catch (error) {
         console.error(error);

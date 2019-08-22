@@ -1,14 +1,10 @@
-import axios from 'axios';
 import Chalk from 'chalk';
-import * as fs from 'fs';
 import * as logdown from 'logdown';
 import * as moment from 'moment';
-import * as os from 'os';
-import parsePath = require('parse-path');
-import * as path from 'path';
 import * as semver from 'semver';
 import {table as createTable} from 'table';
-import {inspect} from 'util';
+
+import {FileService} from './FileService';
 
 export interface RawDeps {
   chrome: string;
@@ -51,7 +47,6 @@ export interface Options {
 }
 
 const {bold} = Chalk;
-const {promises: fsAsync} = fs;
 
 const defaultOptions: Required<Options> = {
   debug: false,
@@ -73,6 +68,7 @@ export const SupportedDependencies: RawDeps = {
 };
 
 export class ElectronInfo {
+  private readonly fileService: FileService;
   private readonly logger: logdown.Logger;
   private readonly options: Required<Options>;
 
@@ -86,6 +82,7 @@ export class ElectronInfo {
     if (this.options.debug) {
       this.logger.state.isEnabled = true;
     }
+    this.fileService = new FileService(this.options);
     this.logger.log('Initialized', this.options);
   }
 
@@ -93,7 +90,7 @@ export class ElectronInfo {
   async getAllReleases(formatted?: false): Promise<RawReleaseInfo[]>;
   async getAllReleases(formatted?: boolean, colored?: boolean): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting all releases:', {colored, formatted});
-    const allReleases = await this.getReleases();
+    const allReleases = await this.fileService.getReleases();
     const limitedReleases = this.limitReleases(allReleases, this.options.limit);
     return formatted ? this.formatReleases(limitedReleases, colored) : limitedReleases;
   }
@@ -112,7 +109,7 @@ export class ElectronInfo {
     colored?: boolean
   ): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting dependency releases:', {colored, dependency, formatted, version});
-    const allReleases = await this.getReleases();
+    const allReleases = await this.fileService.getReleases();
     const dependencyVersions = await this.getVersions(allReleases, dependency, version);
     const filteredReleases = allReleases.filter(
       release => release.deps && dependencyVersions.includes(release.deps[dependency])
@@ -131,7 +128,7 @@ export class ElectronInfo {
   ): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting Electron releases:', {colored, formatted, version});
 
-    const allReleases = await this.getReleases();
+    const allReleases = await this.fileService.getReleases();
     const electronVersions = await this.getVersions(allReleases, 'electron', version);
     const filteredReleases = allReleases.filter(release => electronVersions.includes(release.version));
 
@@ -172,45 +169,6 @@ export class ElectronInfo {
     });
   }
 
-  private async createTempDir(): Promise<string> {
-    if (!this.options.tempDirectory) {
-      this.logger.log('Creating new temp directory');
-      this.options.tempDirectory = await fsAsync.mkdtemp(path.join(os.tmpdir(), 'electron-info-'));
-      this.logger.log('Created temp directory:', {tempDirectory: this.options.tempDirectory});
-    }
-
-    return this.options.tempDirectory;
-  }
-
-  private async downloadReleasesFile(downloadUrl: string, targetFile: string): Promise<RawReleaseInfo[]> {
-    this.logger.log('Downloading releases file:', {downloadUrl, targetFile});
-    const {data: releases} = await axios.get<RawReleaseInfo[]>(downloadUrl);
-
-    this.logger.info(
-      'Received data from server:',
-      inspect(releases)
-        .toString()
-        .slice(0, 40),
-      '...'
-    );
-    if (!Array.isArray(releases)) {
-      throw new Error('Invalid data received from server');
-    }
-
-    await fsAsync.writeFile(targetFile, JSON.stringify(releases));
-    return releases;
-  }
-
-  private async fileIsReadable(filePath: string): Promise<boolean> {
-    try {
-      await fsAsync.access(filePath, fs.constants.F_OK | fs.constants.R_OK);
-      return true;
-    } catch (error) {
-      this.logger.log('File is not readable:', {errorMessage: error.message});
-      return false;
-    }
-  }
-
   private formatDependencyReleases(releases: RawReleaseInfo[], colored?: boolean): string {
     this.logger.log('Formatting dependency releases:', {colored, releasesLength: releases.length});
     releases = releases.filter(release => !!release.deps);
@@ -237,31 +195,6 @@ export class ElectronInfo {
       .join('\n');
 
     return `${joinedReleases}\n${this.buildFoundString(releases)}`;
-  }
-
-  private async getReleases(): Promise<RawReleaseInfo[]> {
-    this.logger.log('Parsing releases URL', {releasesUrl: this.options.releasesUrl});
-    const parsedUrl = parsePath(this.options.releasesUrl);
-    if (!parsedUrl.href) {
-      throw new Error('Invalid releases URL provided');
-    }
-
-    if (parsedUrl.protocol === 'file') {
-      this.logger.log('Releases URL points to a local file:', {releasesUrl: this.options.releasesUrl});
-      return this.loadReleasesFile(path.resolve(this.options.releasesUrl));
-    }
-
-    this.logger.log('Releases URL points to a URL:', {releasesUrl: this.options.releasesUrl});
-
-    const tempDirectory = await this.createTempDir();
-    const tempFile = path.join(tempDirectory, 'latest.json');
-
-    if ((await this.fileIsReadable(tempFile)) && !this.options.forceUpdate) {
-      this.logger.log('Found a local copy of the releases file:', {tempFile});
-      return this.loadReleasesFile(tempFile);
-    }
-
-    return this.downloadReleasesFile(this.options.releasesUrl, tempFile);
   }
 
   private async getVersions(
@@ -323,11 +256,5 @@ export class ElectronInfo {
       return slicedArray;
     }
     return releases;
-  }
-
-  private async loadReleasesFile(localPath: string): Promise<RawReleaseInfo[]> {
-    this.logger.log('Loading local releases file:', {localPath});
-    const rawData = await fsAsync.readFile(localPath, 'utf8');
-    return JSON.parse(rawData);
   }
 }
