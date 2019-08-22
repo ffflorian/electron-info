@@ -37,19 +37,25 @@ program
   .action(async (version, {parent}) => {
     matchedCommand = true;
     if (!version) {
+      console.error('No version specified.');
       program.outputHelp();
       process.exit();
     }
     try {
-      const releases = await new ElectronInfo({
+      const electronInfo = new ElectronInfo({
         ...(parent.debug && {debug: true}),
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
-      }).getElectronReleases(version, !parent.raw as any, parent.colors);
+      });
+
+      const releases = parent.raw
+        ? electronInfo.getElectronReleases(version)
+        : electronInfo.getElectronReleases(version, true, parent.colors);
       console.log(releases);
     } catch (error) {
       console.error(error);
+      process.exit(1);
     }
   });
 
@@ -62,19 +68,25 @@ for (const dependency in SupportedDependencies) {
     .action(async (version, {parent}) => {
       matchedCommand = true;
       if (!version) {
+        console.error('No version specified.');
         program.outputHelp();
         process.exit();
       }
       try {
-        const releases = await new ElectronInfo({
+        const electronInfo = new ElectronInfo({
           ...(parent.debug && {debug: true}),
           ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
           ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
           ...(parent.source && {releasesUrl: parent.source}),
-        }).getDependencyReleases(dependency as keyof RawDeps, version, !parent.raw as any, parent.colors);
+        });
+
+        const releases = parent.raw
+          ? electronInfo.getDependencyReleases(dependency as keyof RawDeps, version)
+          : electronInfo.getDependencyReleases(dependency as keyof RawDeps, version, true, parent.colors);
         console.log(releases);
       } catch (error) {
         console.error(error);
+        process.exit(1);
       }
     });
 }
@@ -86,15 +98,20 @@ program
   .action(async ({parent}) => {
     matchedCommand = true;
     try {
-      const releases = await new ElectronInfo({
+      const electronInfo = new ElectronInfo({
         ...(parent.debug && {debug: true}),
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
-      }).getAllReleases(!parent.raw as any, parent.colors);
+      });
+
+      const releases = parent.raw
+        ? await electronInfo.getAllReleases()
+        : await electronInfo.getAllReleases(true, parent.colors);
       console.log(releases);
     } catch (error) {
       console.error(error);
+      process.exit(1);
     }
   });
 

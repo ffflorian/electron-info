@@ -89,8 +89,8 @@ export class ElectronInfo {
     this.logger.log('Initialized', this.options);
   }
 
-  async getAllReleases(formatted?: false): Promise<RawReleaseInfo[]>;
   async getAllReleases(formatted: true, colored?: boolean): Promise<string>;
+  async getAllReleases(formatted?: false): Promise<RawReleaseInfo[]>;
   async getAllReleases(formatted?: boolean, colored?: boolean): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting all releases:', {colored, formatted});
     const allReleases = await this.getReleases();
@@ -122,8 +122,8 @@ export class ElectronInfo {
     return formatted ? this.formatDependencyReleases(limitedReleases, colored) : limitedReleases;
   }
 
-  async getElectronReleases(version: string, formatted?: false): Promise<RawReleaseInfo[]>;
   async getElectronReleases(version: string, formatted: true, colored?: boolean): Promise<string>;
+  async getElectronReleases(version: string, formatted?: false): Promise<RawReleaseInfo[]>;
   async getElectronReleases(
     version: string,
     formatted?: boolean,
