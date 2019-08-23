@@ -1,23 +1,47 @@
 import * as fs from 'fs-extra';
 import * as nock from 'nock';
 import * as path from 'path';
+import * as uuid from 'uuid';
 
-import {ElectronInfo} from '../src';
+import {ElectronInfo, RawReleaseInfo} from '../src';
 
 const tempDir = path.resolve(__dirname, '.temp');
-const mockUrl = 'https://example.com';
+const mockUrl = 'http://example.com';
+const invalidUrl = 'http://invalid.com';
 const fixturesDir = path.resolve(__dirname, 'fixtures');
+const fullReleasesFile = path.join(fixturesDir, 'electron-releases-full.json');
+
+const createRandomBody = (): RawReleaseInfo[] => [
+  {
+    node_id: uuid.v4(),
+    tag_name: 'v8.0.0-nightly.20190820',
+    name: 'electron v8.0.0-nightly.20190820',
+    prerelease: true,
+    published_at: '2019-08-20T23:37:57Z',
+    version: '8.0.0-nightly.20190820',
+    npm_dist_tags: [],
+    total_downloads: 6,
+  },
+];
+
+const provideReleaseFile = async () => {
+  await fs.remove(tempDir);
+  await fs.copy(fullReleasesFile, path.join(tempDir, 'latest.json'));
+};
 
 describe('ElectronInfo', () => {
+  let releases: string;
+
   beforeAll(async () => {
     await fs.ensureDir(tempDir);
+    releases = await fs.readFile(fullReleasesFile, 'utf8');
+  });
 
-    const releases = await fs.readFile(path.join(fixturesDir, 'electron-releases-full.json'), 'utf8');
-
+  beforeEach(() =>
     nock(mockUrl)
       .get('/')
-      .reply(() => releases);
-  });
+      .reply(() => releases)
+  );
 
   afterAll(() => fs.remove(tempDir));
 
@@ -102,6 +126,38 @@ describe('ElectronInfo', () => {
       }).getDependencyReleases('chrome', 'all');
 
       expect(result.length).toBe(limit);
+    });
+
+    it('Uses a local copy of the releases', async () => {
+      nock(invalidUrl)
+        .get('/')
+        .reply(404);
+
+      await provideReleaseFile();
+
+      await new ElectronInfo({
+        releasesUrl: invalidUrl,
+        tempDirectory: tempDir,
+      }).getDependencyReleases('chrome', 'all');
+    });
+
+    it('Forces downloading the release file', async () => {
+      const customBody = createRandomBody();
+      const customUrl = 'http://custom.com';
+
+      await provideReleaseFile();
+
+      nock(customUrl)
+        .get('/')
+        .reply(() => customBody);
+
+      const result = await new ElectronInfo({
+        forceUpdate: true,
+        releasesUrl: customUrl,
+        tempDirectory: tempDir,
+      }).getElectronReleases('all');
+
+      expect(result).toEqual(customBody);
     });
   });
 });
