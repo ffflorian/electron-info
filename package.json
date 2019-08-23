@@ -68,6 +68,10 @@
       "prettier --write",
       "git add"
     ],
+    "spec/**/*.ts": [
+      "tslint --project tsconfig.jasmine.json --fix",
+      "git add"
+    ],
     "src/**/*.ts": [
       "tslint --project tsconfig.json --fix",
       "git add"
