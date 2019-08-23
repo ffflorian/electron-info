@@ -21,7 +21,7 @@ export interface RawReleaseInfo {
   name: string;
   node_id: string;
   npm_dist_tags: string[];
-  npm_package_name: string;
+  npm_package_name?: string;
   prerelease: boolean;
   published_at: string;
   tag_name: string;
