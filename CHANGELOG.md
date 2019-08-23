@@ -1,3 +1,9 @@
+# [1.12.0](https://github.com/ffflorian/electron-info/compare/v1.11.2...v1.12.0) (2019-08-23)
+
+### Features
+
+- Enable force option ([#33](https://github.com/ffflorian/electron-info/issues/33)) ([ad2bd36](https://github.com/ffflorian/electron-info/commit/ad2bd36))
+
 ## [1.11.2](https://github.com/ffflorian/electron-info/compare/v1.11.1...v1.11.2) (2019-08-21)
 
 ### Bug Fixes
