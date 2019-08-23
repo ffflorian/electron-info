@@ -13,14 +13,14 @@ const fullReleasesFile = path.join(fixturesDir, 'electron-releases-full.json');
 
 const createRandomBody = (): RawReleaseInfo[] => [
   {
-    node_id: uuid.v4(),
-    tag_name: 'v8.0.0-nightly.20190820',
     name: 'electron v8.0.0-nightly.20190820',
+    node_id: uuid.v4(),
+    npm_dist_tags: [],
     prerelease: true,
     published_at: '2019-08-20T23:37:57Z',
-    version: '8.0.0-nightly.20190820',
-    npm_dist_tags: [],
+    tag_name: 'v8.0.0-nightly.20190820',
     total_downloads: 6,
+    version: '8.0.0-nightly.20190820',
   },
 ];
 
