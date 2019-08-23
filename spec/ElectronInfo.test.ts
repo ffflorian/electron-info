@@ -6,6 +6,7 @@ import * as uuid from 'uuid';
 import {ElectronInfo, RawReleaseInfo} from '../src';
 
 const tempDir = path.resolve(__dirname, '.temp');
+const tempDirDownload = path.resolve(__dirname, '.temp/download');
 const mockUrl = 'http://example.com';
 const invalidUrl = 'http://invalid.com';
 const fixturesDir = path.resolve(__dirname, 'fixtures');
@@ -25,8 +26,7 @@ const createRandomBody = (): RawReleaseInfo[] => [
 ];
 
 const provideReleaseFile = async () => {
-  await fs.remove(tempDir);
-  await fs.copy(fullReleasesFile, path.join(tempDir, 'latest.json'));
+  await fs.copy(fullReleasesFile, path.join(tempDirDownload, 'latest.json'));
 };
 
 describe('ElectronInfo', () => {
@@ -84,6 +84,25 @@ describe('ElectronInfo', () => {
 
       expect(result.length).toBe(0);
     });
+
+    it('Forces downloading the release file', async () => {
+      const customBody = createRandomBody();
+      const customUrl = 'http://custom.com';
+
+      await provideReleaseFile();
+
+      nock(customUrl)
+        .get('/')
+        .reply(() => customBody);
+
+      const result = await new ElectronInfo({
+        forceUpdate: true,
+        releasesUrl: customUrl,
+        tempDirectory: tempDirDownload,
+      }).getElectronReleases('all');
+
+      expect(result).toEqual(customBody);
+    });
   });
 
   describe('getDependencyReleases', () => {
@@ -137,27 +156,8 @@ describe('ElectronInfo', () => {
 
       await new ElectronInfo({
         releasesUrl: invalidUrl,
-        tempDirectory: tempDir,
+        tempDirectory: tempDirDownload,
       }).getDependencyReleases('chrome', 'all');
-    });
-
-    it('Forces downloading the release file', async () => {
-      const customBody = createRandomBody();
-      const customUrl = 'http://custom.com';
-
-      await provideReleaseFile();
-
-      nock(customUrl)
-        .get('/')
-        .reply(() => customBody);
-
-      const result = await new ElectronInfo({
-        forceUpdate: true,
-        releasesUrl: customUrl,
-        tempDirectory: tempDir,
-      }).getElectronReleases('all');
-
-      expect(result).toEqual(customBody);
     });
   });
 });
