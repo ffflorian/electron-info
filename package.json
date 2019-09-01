@@ -6,7 +6,7 @@
   "dependencies": {
     "axios": "0.19.0",
     "chalk": "2.4.2",
-    "commander": "3.0.0",
+    "commander": "3.0.1",
     "logdown": "3.2.8",
     "moment": "2.24.0",
     "parse-path": "4.0.1",
