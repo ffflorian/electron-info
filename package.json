@@ -28,7 +28,7 @@
     "@types/table": "4.0.6",
     "@types/uuid": "3.4.5",
     "fs-extra": "8.1.0",
-    "husky": "3.0.4",
+    "husky": "3.0.5",
     "jasmine": "3.4.0",
     "lint-staged": "9.2.5",
     "nock": "10.0.6",
