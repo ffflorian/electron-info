@@ -49,7 +49,7 @@ program
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
-        ...(parent.timeout && {timeout: parent.timeout}),
+        ...(parent.timeout && {timeout: parseInt(parent.timeout, 10)}),
       });
 
       const releases = parent.raw
