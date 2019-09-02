@@ -25,6 +25,7 @@ Allowed version argument inputs:
   .option('-l, --limit <number>', 'Limit output of releases')
   .option('-r, --raw', 'Output raw JSON')
   .option('-s, --source <url>', 'Use a custom releases source URL or path')
+  .option('-t, --timeout <number>', 'Use a custom HTTP timeout')
   .option('--no-colors', `Don't use colors for displaying`)
   .option('--no-prereleases', `Don't include Electron prereleases`)
   .version(version, '-v, --version');

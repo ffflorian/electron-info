@@ -21,26 +21,27 @@ Allowed version argument inputs:
   - "all"
 
 Options:
-  -d, --debug           Enable debug logging
-  -f, --force           Force downloading the latest release file
-  -l, --limit <number>  Limit output of releases
-  -r, --raw             Output raw JSON
-  -s, --source <url>    Use a custom releases source URL or path
-  --no-colors           Don't use colors for displaying
-  --no-prereleases      Don't include Electron prereleases
-  -v, --version         output the version number
-  -h, --help            output usage information
+  -d, --debug             Enable debug logging
+  -f, --force             Force downloading the latest release file
+  -l, --limit <number>    Limit output of releases
+  -r, --raw               Output raw JSON
+  -s, --source <url>      Use a custom releases source URL or path
+  -t, --timeout <number>  Use a custom HTTP timeout
+  --no-colors             Don't use colors for displaying
+  --no-prereleases        Don't include Electron prereleases
+  -v, --version           output the version number
+  -h, --help              output usage information
 
 Commands:
-  electron|e [version]  Get informations about an Electron release
-  chrome|c [version]    Get informations about a chrome release
-  modules|m [version]   Get informations about a modules release
-  node|n [version]      Get informations about a node release
-  openssl|o [version]   Get informations about an openssl release
-  uv|u [version]        Get informations about an uv release
-  v8|v [version]        Get informations about a v8 release
-  zlib|z [version]      Get informations about a zlib release
-  all                   Get informations about all releases
+  electron|e [version]    Get informations about an Electron release
+  chrome|c [version]      Get informations about a chrome release
+  modules|m [version]     Get informations about a modules release
+  node|n [version]        Get informations about a node release
+  openssl|o [version]     Get informations about an openssl release
+  uv|u [version]          Get informations about an uv release
+  v8|v [version]          Get informations about a v8 release
+  zlib|z [version]        Get informations about a zlib release
+  all|a                   Get informations about all releases
 ```
 
 ### Examples

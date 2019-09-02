@@ -44,6 +44,8 @@ export interface Options {
    * Use a custom temporary directory. If not defined, the system's temporary directory will be used.
    */
   tempDirectory?: string;
+  /** Use a custom HTTP timeout in milliseconds. Default is `2000`. */
+  timeout?: number;
 }
 
 const {bold} = Chalk;
@@ -55,6 +57,7 @@ const defaultOptions: Required<Options> = {
   limit: 0,
   releasesUrl: 'https://unpkg.com/electron-releases@latest/lite.json',
   tempDirectory: '',
+  timeout: 2000,
 };
 
 export const SupportedDependencies: RawDeps = {
