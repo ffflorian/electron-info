@@ -49,6 +49,7 @@ program
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
+        ...(parent.timeout && {timeout: parent.timeout}),
       });
 
       const releases = parent.raw
@@ -81,6 +82,7 @@ for (const dependency in SupportedDependencies) {
           ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
           ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
           ...(parent.source && {releasesUrl: parent.source}),
+          ...(parent.timeout && {timeout: parent.timeout}),
         });
 
         const releases = parent.raw
@@ -107,11 +109,13 @@ program
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
+        ...(parent.timeout && {timeout: parent.timeout}),
       });
 
       const releases = parent.raw
         ? await electronInfo.getAllReleases()
         : await electronInfo.getAllReleases(true, parent.colors);
+
       console.log(releases);
     } catch (error) {
       console.error(error);
