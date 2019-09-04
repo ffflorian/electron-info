@@ -40,7 +40,7 @@ describe('ElectronInfo', () => {
   beforeEach(() =>
     nock(mockUrl)
       .get('/')
-      .reply(() => releases)
+      .reply(200, releases)
   );
 
   afterAll(() => fs.remove(tempDir));
@@ -93,7 +93,7 @@ describe('ElectronInfo', () => {
 
       nock(customUrl)
         .get('/')
-        .reply(() => customBody);
+        .reply(200, customBody);
 
       const result = await new ElectronInfo({
         forceUpdate: true,
