@@ -1,3 +1,9 @@
+# [1.13.0](https://github.com/ffflorian/electron-info/compare/v1.12.0...v1.13.0) (2019-09-05)
+
+### Features
+
+- Add custom HTTP timeout ([#45](https://github.com/ffflorian/electron-info/issues/45)) ([a187352](https://github.com/ffflorian/electron-info/commit/a187352))
+
 # [1.12.0](https://github.com/ffflorian/electron-info/compare/v1.11.2...v1.12.0) (2019-08-23)
 
 ### Features
