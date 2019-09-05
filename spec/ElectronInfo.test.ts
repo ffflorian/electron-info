@@ -3,7 +3,7 @@ import * as nock from 'nock';
 import * as path from 'path';
 import * as uuid from 'uuid';
 
-import {ElectronInfo, RawReleaseInfo} from '../src';
+import {ElectronInfo, RawReleaseInfo} from '../src/ElectronInfo';
 
 const tempDir = path.resolve(__dirname, '.temp');
 const tempDirDownload = path.resolve(__dirname, '.temp/download');
