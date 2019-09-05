@@ -25,6 +25,7 @@ Allowed version argument inputs:
   .option('-l, --limit <number>', 'Limit output of releases')
   .option('-r, --raw', 'Output raw JSON')
   .option('-s, --source <url>', 'Use a custom releases source URL or path')
+  .option('-t, --timeout <number>', 'Use a custom HTTP timeout')
   .option('--no-colors', `Don't use colors for displaying`)
   .option('--no-prereleases', `Don't include Electron prereleases`)
   .version(version, '-v, --version');
@@ -48,6 +49,7 @@ program
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
+        ...(parent.timeout && {timeout: parseInt(parent.timeout, 10)}),
       });
 
       const releases = parent.raw
@@ -80,6 +82,7 @@ for (const dependency in SupportedDependencies) {
           ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
           ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
           ...(parent.source && {releasesUrl: parent.source}),
+          ...(parent.timeout && {timeout: parent.timeout}),
         });
 
         const releases = parent.raw
@@ -106,11 +109,13 @@ program
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
+        ...(parent.timeout && {timeout: parent.timeout}),
       });
 
       const releases = parent.raw
         ? await electronInfo.getAllReleases()
         : await electronInfo.getAllReleases(true, parent.colors);
+
       console.log(releases);
     } catch (error) {
       console.error(error);

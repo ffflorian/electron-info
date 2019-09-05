@@ -84,7 +84,16 @@ export class FileService {
 
   private async downloadReleasesFile(downloadUrl: string, targetFile: string): Promise<RawReleaseInfo[]> {
     this.logger.log('Downloading releases file:', {downloadUrl, targetFile});
-    const {data: releases} = await axios.get<RawReleaseInfo[]>(downloadUrl);
+
+    let releases = [];
+
+    try {
+      const response = await axios.get<RawReleaseInfo[]>(downloadUrl, {timeout: this.options.timeout});
+      releases = response.data;
+    } catch (error) {
+      this.logger.warn(`Request failed: "${error.message}"`);
+      return [];
+    }
 
     this.logger.info(
       'Received data from server:',
