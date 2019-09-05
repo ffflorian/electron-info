@@ -36,12 +36,19 @@ export interface Options {
   electronPrereleases?: boolean;
   /** Force downloading the latest release file. Default: `false`. */
   forceUpdate?: boolean;
-  /** Limit output of releases. Everything below 1 will be treated as no limit. Default: 0. */
+  /**
+   * Limit output of releases. Everything below 1 will be treated as no limit.
+   * Default: 0.
+   */
   limit?: number;
-  /** Can be a URL or a local path. Default: https://unpkg.com/electron-releases@latest/lite.json. */
+  /**
+   * Can be a URL or a local path. Default:
+   * https://unpkg.com/electron-releases@latest/lite.json.
+   */
   releasesUrl?: string;
   /**
-   * Use a custom temporary directory. If not defined, the system's temporary directory will be used.
+   * Use a custom temporary directory. If not defined, the system's temporary
+   * directory will be used.
    */
   tempDirectory?: string;
   /** Use a custom HTTP timeout in milliseconds. Default is `2000`. */
