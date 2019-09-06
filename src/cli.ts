@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 
 import * as program from 'commander';
+import * as fs from 'fs';
 import * as path from 'path';
+
 import {ElectronInfo, RawDeps, SupportedDependencies} from './ElectronInfo';
 
-const packageJsonPath = path.join(__dirname, '../package.json');
-const {description, name, version} = require(packageJsonPath);
+const defaultPackageJsonPath = path.join(__dirname, 'package.json');
+const packageJsonPath = fs.existsSync(defaultPackageJsonPath)
+  ? defaultPackageJsonPath
+  : path.join(__dirname, '../package.json');
+
+const packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
+const {description, name, version}: {description: string; name: string; version: string} = JSON.parse(packageJson);
 
 const needsLetterN = (name: string) => `a${/^[aeoui]/.test(name) ? 'n' : ''} ${name}`;
 let matchedCommand = false;
