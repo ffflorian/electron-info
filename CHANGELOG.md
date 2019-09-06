@@ -1,3 +1,9 @@
+# [1.14.0](https://github.com/ffflorian/electron-info/compare/v1.13.0...v1.14.0) (2019-09-06)
+
+### Features
+
+- Publish flattened ([0f3f0d2](https://github.com/ffflorian/electron-info/commit/0f3f0d2))
+
 # [1.13.0](https://github.com/ffflorian/electron-info/compare/v1.12.0...v1.13.0) (2019-09-05)
 
 ### Features
