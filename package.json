@@ -24,7 +24,7 @@
     "@types/node": "~12",
     "@types/parse-path": "4.0.0",
     "@types/semver": "6.0.2",
-    "@types/table": "4.0.6",
+    "@types/table": "4.0.7",
     "@types/uuid": "3.4.5",
     "fs-extra": "8.1.0",
     "husky": "3.0.5",
