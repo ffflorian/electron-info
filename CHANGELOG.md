@@ -1,3 +1,9 @@
+## [1.14.1](https://github.com/ffflorian/electron-info/compare/v1.14.0...v1.14.1) (2019-09-08)
+
+### Bug Fixes
+
+- Remove electron prereleases ([f4ca080](https://github.com/ffflorian/electron-info/commit/f4ca080))
+
 # [1.14.0](https://github.com/ffflorian/electron-info/compare/v1.13.0...v1.14.0) (2019-09-06)
 
 ### Features
