@@ -224,16 +224,16 @@ export class ElectronInfo {
     let dependencyVersions: string[] = [];
 
     if (!this.options.electronPrereleases) {
-      this.logger.log('Removing electron prereleases from found versions');
+      const tempReleaseNumber = releases.length;
       releases = releases.filter(release => semver.prerelease(release.version) === null);
+      this.logger.log('Removing electron prereleases from found versions', {
+        after: releases.length,
+        before: tempReleaseNumber,
+      });
     }
 
     dependencyVersions = releases
       .filter(release => {
-        if (!this.options.electronPrereleases && semver.prerelease(release.version) === null) {
-          return false;
-        }
-
         if (key !== 'electron' && !Boolean(release.deps)) {
           return false;
         }

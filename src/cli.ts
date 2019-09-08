@@ -54,7 +54,7 @@ program
         ...(parent.debug && {debug: true}),
         ...(parent.force && {forceUpdate: true}),
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
-        ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
+        ...(typeof parent.prereleases !== undefined && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
         ...(parent.timeout && {timeout: parseInt(parent.timeout, 10)}),
       });
@@ -87,7 +87,7 @@ for (const dependency in SupportedDependencies) {
           ...(parent.debug && {debug: true}),
           ...(parent.force && {forceUpdate: true}),
           ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
-          ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
+          ...(typeof parent.prereleases !== undefined && {electronPrereleases: parent.prereleases}),
           ...(parent.source && {releasesUrl: parent.source}),
           ...(parent.timeout && {timeout: parent.timeout}),
         });
@@ -114,7 +114,7 @@ program
         ...(parent.debug && {debug: true}),
         ...(parent.force && {forceUpdate: true}),
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
-        ...(parent.prereleases && {electronPrereleases: parent.prereleases}),
+        ...(typeof parent.prereleases !== undefined && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
         ...(parent.timeout && {timeout: parent.timeout}),
       });
