@@ -1,3 +1,10 @@
+## [1.14.2](https://github.com/ffflorian/electron-info/compare/v1.14.1...v1.14.2) (2019-10-16)
+
+### Bug Fixes
+
+- Change release file source to GitHub ([66a3761](https://github.com/ffflorian/electron-info/commit/66a3761))
+- Throw error if source file is unavailable ([a700301](https://github.com/ffflorian/electron-info/commit/a700301))
+
 ## [1.14.1](https://github.com/ffflorian/electron-info/compare/v1.14.0...v1.14.1) (2019-09-08)
 
 ### Bug Fixes
