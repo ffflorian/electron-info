@@ -91,8 +91,7 @@ export class FileService {
       const response = await axios.get<RawReleaseInfo[]>(downloadUrl, {timeout: this.options.timeout});
       releases = response.data;
     } catch (error) {
-      this.logger.warn(`Request failed: "${error.message}"`);
-      return [];
+      throw new Error(`Request failed: "${error.message}"`);
     }
 
     this.logger.info(

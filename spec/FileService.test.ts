@@ -26,8 +26,10 @@ describe('FileService', () => {
 
   describe('downloadReleasesFile', () => {
     it('honors a custom timeout', async () => {
-      const result = await fileService['downloadReleasesFile'](mockUrl, '');
-      expect(result).toEqual([]);
+      try {
+        await fileService['downloadReleasesFile'](mockUrl, '');
+        fail('Should throw on timeout');
+      } catch (error) {}
     });
   });
 });
