@@ -62,7 +62,7 @@ const defaultOptions: Required<Options> = {
   electronPrereleases: true,
   forceUpdate: false,
   limit: 0,
-  releasesUrl: 'https://unpkg.com/electron-releases@latest/lite.json',
+  releasesUrl: 'https://raw.githubusercontent.com/electron/releases/master/lite.json',
   tempDirectory: '',
   timeout: 2000,
 };
