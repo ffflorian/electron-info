@@ -1,4 +1,4 @@
-import Chalk from 'chalk';
+import Chalk = require('chalk');
 import * as logdown from 'logdown';
 import * as moment from 'moment';
 import * as semver from 'semver';
@@ -153,7 +153,7 @@ export class ElectronInfo {
 
   private buildRawTables(releases: RawReleaseInfo[], colored?: boolean): string[][][] {
     this.logger.log('Building raw tables:', {releasesLength: releases.length, colored});
-    const coloredOrNot = (text: string, style: typeof Chalk): string => (colored ? style(text) : text);
+    const coloredOrNot = (text: string, style: Chalk.Chalk): string => (colored ? style(text) : text);
 
     return releases.map(release => {
       const electronVersion = `${release.version}${release.prerelease ? ' (prerelease)' : ''}`;
