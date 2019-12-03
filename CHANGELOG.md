@@ -1,3 +1,9 @@
+# [1.15.0](https://github.com/ffflorian/electron-info/compare/v1.14.2...v1.15.0) (2019-12-03)
+
+### Features
+
+- Display modules explanation ([#125](https://github.com/ffflorian/electron-info/issues/125)) ([b9fc207](https://github.com/ffflorian/electron-info/commit/b9fc207))
+
 ## [1.14.2](https://github.com/ffflorian/electron-info/compare/v1.14.1...v1.14.2) (2019-10-16)
 
 ### Bug Fixes
