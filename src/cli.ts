@@ -14,7 +14,6 @@ const packageJsonPath = fs.existsSync(defaultPackageJsonPath)
 const packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
 const {description, name, version}: {description: string; name: string; version: string} = JSON.parse(packageJson);
 
-const needsLetterN = (name: string) => `a${/^[aeoui]/.test(name) ? 'n' : ''} ${name}`;
 let matchedCommand = false;
 
 program
@@ -33,9 +32,9 @@ Allowed version argument inputs:
   .option('-r, --raw', 'Output raw JSON')
   .option('-s, --source <url>', 'Use a custom releases source URL or path')
   .option('-t, --timeout <number>', 'Use a custom HTTP timeout')
+  .version(version, '-v, --version')
   .option('--no-colors', `Don't use colors for displaying`)
-  .option('--no-prereleases', `Don't include Electron prereleases`)
-  .version(version, '-v, --version');
+  .option('--no-prereleases', `Don't include Electron prereleases`);
 
 program
   .command('electron')
@@ -69,11 +68,11 @@ program
     }
   });
 
-for (const dependency in SupportedDependencies) {
+for (const [dependencyShortName, dependencyFullName] of Object.entries(SupportedDependencies)) {
   program
-    .command(dependency)
-    .alias(dependency[0])
-    .description(`Get informations about ${needsLetterN(dependency)} release`)
+    .command(dependencyShortName)
+    .alias(dependencyShortName[0])
+    .description(`Get informations about ${dependencyFullName} releases`)
     .arguments('[version]')
     .action(async (version, {parent}) => {
       matchedCommand = true;
@@ -93,8 +92,13 @@ for (const dependency in SupportedDependencies) {
         });
 
         const releases = parent.raw
-          ? await electronInfo.getDependencyReleases(dependency as keyof RawDeps, version)
-          : await electronInfo.getDependencyReleases(dependency as keyof RawDeps, version, true, parent.colors);
+          ? await electronInfo.getDependencyReleases(dependencyShortName as keyof RawDeps, version)
+          : await electronInfo.getDependencyReleases(
+              dependencyShortName as keyof RawDeps,
+              version,
+              true,
+              parent.colors
+            );
         console.log(releases);
       } catch (error) {
         console.error(error);
