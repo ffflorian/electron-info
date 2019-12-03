@@ -69,7 +69,7 @@ const defaultOptions: Required<Options> = {
 
 export const SupportedDependencies: RawDeps = {
   chrome: 'Chrome',
-  modules: 'Modules',
+  modules: 'Modules (Node ABI)',
   node: 'Node.js',
   openssl: 'OpenSSL',
   uv: 'uv',
@@ -165,13 +165,13 @@ export class ElectronInfo {
 
       if (release.deps) {
         table.push(
-          [coloredOrNot('Node.js', bold.red), release.deps.node],
-          [coloredOrNot('Chrome', bold.green), release.deps.chrome],
-          [coloredOrNot('OpenSSL', bold.blue), release.deps.openssl],
-          [coloredOrNot('Modules', bold.yellow), release.deps.modules],
-          [coloredOrNot('uv', bold.cyan), release.deps.uv],
-          [coloredOrNot('V8', bold.rgb(150, 150, 150)), release.deps.v8],
-          [coloredOrNot('zlib', bold.magenta), release.deps.zlib]
+          [coloredOrNot(SupportedDependencies.node, bold.red), release.deps.node],
+          [coloredOrNot(SupportedDependencies.chrome, bold.green), release.deps.chrome],
+          [coloredOrNot(SupportedDependencies.openssl, bold.blue), release.deps.openssl],
+          [coloredOrNot(SupportedDependencies.modules, bold.yellow), release.deps.modules],
+          [coloredOrNot(SupportedDependencies.uv, bold.cyan), release.deps.uv],
+          [coloredOrNot(SupportedDependencies.v8, bold.rgb(150, 150, 150)), release.deps.v8],
+          [coloredOrNot(SupportedDependencies.zlib, bold.magenta), release.deps.zlib]
         );
       }
 
