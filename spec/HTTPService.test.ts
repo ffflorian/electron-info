@@ -13,7 +13,7 @@ describe('HTTPService', () => {
   beforeEach(() =>
     nock(mockUrl)
       .get('/')
-      .delayBody(5000)
+      .delayConnection(5000)
       .reply(200, [{data: 'invalid'}])
   );
 
