@@ -1,17 +1,12 @@
 import * as nock from 'nock';
 
-import {FileService} from '../src/FileService';
+import {HTTPService} from '../src/HTTPService';
 
 const mockUrl = 'http://example.com';
 
-describe('FileService', () => {
-  const fileService = new FileService({
+describe('HTTPService', () => {
+  const httpService = new HTTPService({
     debug: false,
-    electronPrereleases: false,
-    forceUpdate: false,
-    limit: 0,
-    releasesUrl: mockUrl,
-    tempDirectory: '',
     timeout: 500,
   });
 
@@ -27,7 +22,7 @@ describe('FileService', () => {
   describe('downloadReleasesFile', () => {
     it('honors a custom timeout', async () => {
       try {
-        await fileService['downloadReleasesFile'](mockUrl, '');
+        await httpService.downloadReleasesFile(mockUrl, '');
         fail('Should throw on timeout');
       } catch (error) {}
     });

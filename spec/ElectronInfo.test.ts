@@ -8,7 +8,7 @@ import {ElectronInfo, RawReleaseInfo} from '../src/ElectronInfo';
 const tempDir = path.resolve(__dirname, '.temp');
 const tempDirDownload = path.resolve(__dirname, '.temp/download');
 const mockUrl = 'http://example.com';
-const invalidUrl = 'http://invalid.com';
+const invalidUrl = 'http://invalid.inv';
 const fixturesDir = path.resolve(__dirname, 'fixtures');
 const fullReleasesFile = path.join(fixturesDir, 'electron-releases-full.json');
 
@@ -17,10 +17,10 @@ const createRandomBody = (): RawReleaseInfo[] => [
     name: 'electron v8.0.0-nightly.20190820',
     node_id: uuid.v4(),
     npm_dist_tags: [],
-    prerelease: true,
-    published_at: '2019-08-20T23:37:57Z',
+    prerelease: !!Math.round(Math.random()),
+    published_at: new Date().toUTCString(),
     tag_name: 'v8.0.0-nightly.20190820',
-    total_downloads: 6,
+    total_downloads: Math.round(Math.random() * 1000),
     version: '8.0.0-nightly.20190820',
   },
 ];
