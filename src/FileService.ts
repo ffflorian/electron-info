@@ -1,6 +1,6 @@
+import {isAfter as isAfterDate, sub as subtractDate} from 'date-fns';
 import {constants as fsConstants, promises as fs} from 'fs';
 import * as logdown from 'logdown';
-import * as moment from 'moment';
 import * as os from 'os';
 import parsePath = require('parse-path');
 import * as path from 'path';
@@ -60,7 +60,7 @@ export class FileService {
       this.logger.log('Found a local copy of the releases file:', {tempFile});
 
       const tempFileFromToday = await this.isFileFromToday(tempFile);
-      this.logger.log(`Releases file "${tempFile}" is from today:`, tempFileFromToday);
+      this.logger.log(`Releases file "${tempFile}" is less than 24 hours old:`, tempFileFromToday);
 
       if (tempFileFromToday) {
         return this.loadReleasesFile(tempFile);
@@ -85,10 +85,11 @@ export class FileService {
   }
 
   private async isFileFromToday(fileName: string): Promise<boolean> {
-    const fileStat = await fs.stat(fileName);
-    const fileAge = moment(fileStat.mtime);
-    this.logger.log(`File "${fileName}" is from "${fileAge.toString()}"`);
-    return fileAge.isAfter(moment().subtract(1, 'days')).valueOf();
+    const {mtime: fileModifiedDate} = await fs.stat(fileName);
+    this.logger.log(`File "${fileName}" is from "${fileModifiedDate.toString()}"`);
+
+    const yesterday = subtractDate(new Date(), {days: 1});
+    return isAfterDate(fileModifiedDate, yesterday);
   }
 
   private async isPathReadable(filePath: string): Promise<boolean> {
