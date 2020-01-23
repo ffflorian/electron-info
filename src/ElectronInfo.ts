@@ -1,6 +1,6 @@
-import Chalk = require('chalk');
+import {Chalk, bold as chalkBold} from 'chalk';
+import {format as formatDate} from 'date-fns';
 import * as logdown from 'logdown';
-import * as moment from 'moment';
 import * as semver from 'semver';
 import {table as createTable} from 'table';
 
@@ -54,8 +54,6 @@ export interface Options {
   /** Use a custom HTTP timeout in milliseconds. Default is `2000`. */
   timeout?: number;
 }
-
-const {bold} = Chalk;
 
 const defaultOptions: Required<Options> = {
   debug: false,
@@ -153,25 +151,26 @@ export class ElectronInfo {
 
   private buildRawTables(releases: RawReleaseInfo[], colored?: boolean): string[][][] {
     this.logger.log('Building raw tables:', {releasesLength: releases.length, colored});
-    const coloredOrNot = (text: string, style: Chalk.Chalk): string => (colored ? style(text) : text);
+    const coloredOrNot = (text: string, style: Chalk): string => (colored ? style(text) : text);
 
     return releases.map(release => {
       const electronVersion = `${release.version}${release.prerelease ? ' (prerelease)' : ''}`;
-      const releaseDate = moment(release.published_at).format('L');
+      const parsedDate = new Date(release.published_at);
+      const releaseDate = formatDate(parsedDate, 'yyyy-mm-dd');
       const table = [
-        [coloredOrNot('Electron', bold), electronVersion],
-        [coloredOrNot('Published on', bold), releaseDate],
+        [coloredOrNot('Electron', chalkBold), electronVersion],
+        [coloredOrNot('Published on', chalkBold), releaseDate],
       ];
 
       if (release.deps) {
         table.push(
-          [coloredOrNot(SupportedDependencies.node, bold.red), release.deps.node],
-          [coloredOrNot(SupportedDependencies.chrome, bold.green), release.deps.chrome],
-          [coloredOrNot(SupportedDependencies.openssl, bold.blue), release.deps.openssl],
-          [coloredOrNot(SupportedDependencies.modules, bold.yellow), release.deps.modules],
-          [coloredOrNot(SupportedDependencies.uv, bold.cyan), release.deps.uv],
-          [coloredOrNot(SupportedDependencies.v8, bold.rgb(150, 150, 150)), release.deps.v8],
-          [coloredOrNot(SupportedDependencies.zlib, bold.magenta), release.deps.zlib]
+          [coloredOrNot(SupportedDependencies.node, chalkBold.red), release.deps.node],
+          [coloredOrNot(SupportedDependencies.chrome, chalkBold.green), release.deps.chrome],
+          [coloredOrNot(SupportedDependencies.openssl, chalkBold.blue), release.deps.openssl],
+          [coloredOrNot(SupportedDependencies.modules, chalkBold.yellow), release.deps.modules],
+          [coloredOrNot(SupportedDependencies.uv, chalkBold.cyan), release.deps.uv],
+          [coloredOrNot(SupportedDependencies.v8, chalkBold.rgb(150, 150, 150)), release.deps.v8],
+          [coloredOrNot(SupportedDependencies.zlib, chalkBold.magenta), release.deps.zlib]
         );
       }
 
