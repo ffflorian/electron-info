@@ -3114,10 +3114,10 @@ nice-try@^1.0.4:
   resolved "https://registry.npmjs.org/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
 
-nock@11.7.2:
-  version "11.7.2"
-  resolved "https://registry.npmjs.org/nock/-/nock-11.7.2.tgz#4cee4fa838dc3635c074c5b3436bcdec7f7ee213"
-  integrity sha512-7swr5bL1xBZ5FctyubjxEVySXOSebyqcL7Vy1bx1nS9IUqQWj81cmKjVKJLr8fHhtzI1MV8nyCdENA/cGcY1+Q==
+nock@11.8.1:
+  version "11.8.1"
+  resolved "https://registry.npmjs.org/nock/-/nock-11.8.1.tgz#4e6133ff4abc881e056f03ebabfa0b78c7cfd62a"
+  integrity sha512-FB18RAQckl3zfh67QNZHkb0ODYxzMwZ4SF46+1SzzFmYM2szaAQTdpPZW3ZQEnl73dtinSVYuv3BHvd49wznkA==
   dependencies:
     debug "^4.1.0"
     json-stringify-safe "^5.0.1"
