@@ -4,7 +4,8 @@ import * as program from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import {ElectronInfo, RawDeps, SupportedDependencies} from './ElectronInfo';
+import {ElectronInfo, SupportedDependencies} from './ElectronInfo';
+import type {RawDeps} from './ElectronInfo';
 
 const defaultPackageJsonPath = path.join(__dirname, 'package.json');
 const packageJsonPath = fs.existsSync(defaultPackageJsonPath)
@@ -12,14 +13,13 @@ const packageJsonPath = fs.existsSync(defaultPackageJsonPath)
   : path.join(__dirname, '../package.json');
 
 const packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
-const {description, name, version}: {description: string; name: string; version: string} = JSON.parse(packageJson);
+const {description, name, version} = JSON.parse(packageJson);
 
 let matchedCommand = false;
 
 program
   .name(name)
-  .description(
-    `${description}
+  .description(`${description}
 
 Allowed version argument inputs:
   - SemVer versions (e.g. "~7")
@@ -50,17 +50,18 @@ program
     }
     try {
       const electronInfo = new ElectronInfo({
-        ...(parent.debug && {debug: true}),
-        ...(parent.force && {forceUpdate: true}),
-        ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
-        ...(typeof parent.prereleases !== undefined && {electronPrereleases: parent.prereleases}),
-        ...(parent.source && {releasesUrl: parent.source}),
-        ...(parent.timeout && {timeout: parseInt(parent.timeout, 10)}),
+        ...(parent.debug ?? {debug: true}),
+        ...(parent.force ?? {forceUpdate: true}),
+        ...(parent.limit ?? {limit: parseInt(parent.limit, 10)}),
+        ...(parent.prereleases ?? {electronPrereleases: parent.prereleases}),
+        ...(parent.source ?? {releasesUrl: parent.source}),
+        ...(parent.timeout ?? {timeout: parseInt(parent.timeout, 10)}),
       });
 
       const releases = parent.raw
         ? await electronInfo.getElectronReleases(version)
         : await electronInfo.getElectronReleases(version, true, parent.colors);
+
       console.log(releases);
     } catch (error) {
       console.error(error);

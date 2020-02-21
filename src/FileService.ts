@@ -5,7 +5,7 @@ import * as os from 'os';
 import parsePath = require('parse-path');
 import * as path from 'path';
 
-import {Options, RawReleaseInfo} from './ElectronInfo';
+import type {Options, RawReleaseInfo} from './ElectronInfo';
 import {HTTPService} from './HTTPService';
 
 export class FileService {
