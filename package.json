@@ -8,7 +8,7 @@
     "chalk": "3.0.0",
     "commander": "4.1.1",
     "date-fns": "2.10.0",
-    "logdown": "3.3.0",
+    "logdown": "3.3.1",
     "parse-path": "4.0.1",
     "semver": "7.1.3",
     "table": "5.4.6"
