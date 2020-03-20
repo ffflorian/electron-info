@@ -27,7 +27,7 @@
     "@types/semver": "7.1.0",
     "@types/table": "4.0.7",
     "@types/uuid": "7.0.2",
-    "fs-extra": "8.1.0",
+    "fs-extra": "9.0.0",
     "husky": "4.2.3",
     "jasmine": "3.5.0",
     "lint-staged": "10.0.8",
