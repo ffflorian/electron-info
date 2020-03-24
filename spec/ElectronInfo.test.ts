@@ -37,11 +37,7 @@ describe('ElectronInfo', () => {
     releases = await fs.readFile(fullReleasesFile, 'utf8');
   });
 
-  beforeEach(() =>
-    nock(mockUrl)
-      .get('/')
-      .reply(200, releases)
-  );
+  beforeEach(() => nock(mockUrl).get('/').reply(200, releases));
 
   afterAll(() => fs.remove(tempDir));
 
@@ -91,9 +87,7 @@ describe('ElectronInfo', () => {
 
       await provideReleaseFile();
 
-      nock(customUrl)
-        .get('/')
-        .reply(200, customBody);
+      nock(customUrl).get('/').reply(200, customBody);
 
       const result = await new ElectronInfo({
         forceUpdate: true,
@@ -148,9 +142,7 @@ describe('ElectronInfo', () => {
     });
 
     it('Uses a local copy of the releases', async () => {
-      nock(invalidUrl)
-        .get('/')
-        .reply(404);
+      nock(invalidUrl).get('/').reply(404);
 
       await provideReleaseFile();
 

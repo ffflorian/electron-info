@@ -35,13 +35,7 @@ export class HTTPService {
       throw new Error(`Request failed: "${error.message}"`);
     }
 
-    this.logger.info(
-      'Received data from server:',
-      inspect(releases)
-        .toString()
-        .slice(0, 40),
-      '...'
-    );
+    this.logger.info('Received data from server:', inspect(releases).toString().slice(0, 40), '...');
 
     if (!Array.isArray(releases)) {
       throw new Error('Invalid data received from server');
