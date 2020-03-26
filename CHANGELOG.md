@@ -1,3 +1,9 @@
+## [1.15.1](https://github.com/ffflorian/electron-info/compare/v1.15.0...v1.15.1) (2020-03-26)
+
+### Bug Fixes
+
+- Release month formatting ([281d0e4](https://github.com/ffflorian/electron-info/commit/281d0e4))
+
 # [1.15.0](https://github.com/ffflorian/electron-info/compare/v1.14.2...v1.15.0) (2019-12-03)
 
 ### Features
