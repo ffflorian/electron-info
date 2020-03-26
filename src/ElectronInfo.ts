@@ -156,7 +156,7 @@ export class ElectronInfo {
     return releases.map(release => {
       const electronVersion = `${release.version}${release.prerelease ? ' (prerelease)' : ''}`;
       const parsedDate = new Date(release.published_at);
-      const releaseDate = formatDate(parsedDate, 'yyyy-mm-dd');
+      const releaseDate = formatDate(parsedDate, 'yyyy-MM-dd');
       const table = [
         [coloredOrNot('Electron', chalkBold), electronVersion],
         [coloredOrNot('Published on', chalkBold), releaseDate],
