@@ -3,7 +3,7 @@ import {promises as fs} from 'fs';
 import * as logdown from 'logdown';
 import {inspect} from 'util';
 
-import {Options, RawReleaseInfo} from './ElectronInfo';
+import type {Options, RawReleaseInfo} from './ElectronInfo';
 
 export type HTTPOptions = Pick<Options, 'debug' | 'timeout'>;
 

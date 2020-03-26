@@ -2,10 +2,10 @@ import {isAfter as isAfterDate, sub as subtractDate} from 'date-fns';
 import {constants as fsConstants, promises as fs} from 'fs';
 import * as logdown from 'logdown';
 import * as os from 'os';
-import parsePath = require('parse-path');
+import * as parsePath from 'parse-path';
 import * as path from 'path';
 
-import {Options, RawReleaseInfo} from './ElectronInfo';
+import type {Options, RawReleaseInfo} from './ElectronInfo';
 import {HTTPService} from './HTTPService';
 
 export class FileService {
