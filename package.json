@@ -5,7 +5,7 @@
   },
   "dependencies": {
     "axios": "0.19.2",
-    "chalk": "3.0.0",
+    "chalk": "4.0.0",
     "commander": "5.0.0",
     "date-fns": "2.11.1",
     "logdown": "3.3.1",
