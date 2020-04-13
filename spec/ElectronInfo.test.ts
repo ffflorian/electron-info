@@ -60,7 +60,7 @@ describe('ElectronInfo', () => {
         tempDirectory: tempDir,
       }).getElectronReleases('^5');
 
-      expect(result.length).toBe(29);
+      expect(result.length).toBe(23);
     });
 
     it('Parses dist tags', async () => {
