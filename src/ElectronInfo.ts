@@ -150,7 +150,7 @@ export class ElectronInfo {
   }
 
   private buildRawTables(releases: RawReleaseInfo[], colored?: boolean): string[][][] {
-    this.logger.log('Building raw tables:', {releasesLength: releases.length, colored});
+    this.logger.log('Building raw tables:', {colored, releasesLength: releases.length});
     const coloredOrNot = (text: string, style: Chalk): string => (colored ? style(text) : text);
 
     return releases.map(release => {
@@ -169,6 +169,7 @@ export class ElectronInfo {
           [coloredOrNot(SupportedDependencies.openssl, chalkBold.blue), release.deps.openssl],
           [coloredOrNot(SupportedDependencies.modules, chalkBold.yellow), release.deps.modules],
           [coloredOrNot(SupportedDependencies.uv, chalkBold.cyan), release.deps.uv],
+          // eslint-disable-next-line no-magic-numbers
           [coloredOrNot(SupportedDependencies.v8, chalkBold.rgb(150, 150, 150)), release.deps.v8],
           [coloredOrNot(SupportedDependencies.zlib, chalkBold.magenta), release.deps.zlib]
         );

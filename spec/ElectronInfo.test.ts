@@ -11,6 +11,8 @@ const mockUrl = 'http://example.com';
 const invalidUrl = 'http://invalid.inv';
 const fixturesDir = path.resolve(__dirname, 'fixtures');
 const fullReleasesFile = path.join(fixturesDir, 'electron-releases-full.json');
+const HTTP_CODE_OK = 200;
+const HTTP_CODE_NOT_FOUND = 404;
 
 const createRandomBody = (): RawReleaseInfo[] => [
   {
@@ -20,6 +22,7 @@ const createRandomBody = (): RawReleaseInfo[] => [
     prerelease: !!Math.round(Math.random()),
     published_at: new Date().toUTCString(),
     tag_name: 'v8.0.0-nightly.20190820',
+    // eslint-disable-next-line no-magic-numbers
     total_downloads: Math.round(Math.random() * 1000),
     version: '8.0.0-nightly.20190820',
   },
@@ -37,7 +40,7 @@ describe('ElectronInfo', () => {
     releases = await fs.readFile(fullReleasesFile, 'utf8');
   });
 
-  beforeEach(() => nock(mockUrl).get('/').reply(200, releases));
+  beforeEach(() => nock(mockUrl).get('/').reply(HTTP_CODE_OK, releases));
 
   afterAll(() => fs.remove(tempDir));
 
@@ -60,6 +63,7 @@ describe('ElectronInfo', () => {
         tempDirectory: tempDir,
       }).getElectronReleases('^5');
 
+      // eslint-disable-next-line no-magic-numbers
       expect(result.length).toBe(23);
     });
 
@@ -87,7 +91,7 @@ describe('ElectronInfo', () => {
 
       await provideReleaseFile();
 
-      nock(customUrl).get('/').reply(200, customBody);
+      nock(customUrl).get('/').reply(HTTP_CODE_OK, customBody);
 
       const result = await new ElectronInfo({
         forceUpdate: true,
@@ -117,6 +121,7 @@ describe('ElectronInfo', () => {
         tempDirectory: tempDir,
       }).getDependencyReleases('chrome', '~66');
 
+      // eslint-disable-next-line no-magic-numbers
       expect(result.length).toBe(56);
     });
 
@@ -142,7 +147,7 @@ describe('ElectronInfo', () => {
     });
 
     it('Uses a local copy of the releases', async () => {
-      nock(invalidUrl).get('/').reply(404);
+      nock(invalidUrl).get('/').reply(HTTP_CODE_NOT_FOUND);
 
       await provideReleaseFile();
 
