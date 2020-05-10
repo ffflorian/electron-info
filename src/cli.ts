@@ -61,7 +61,7 @@ program
       const releases = parent.raw
         ? await electronInfo.getElectronReleases(version)
         : await electronInfo.getElectronReleases(version, true, parent.colors);
-      console.log(releases);
+      console.info(releases);
     } catch (error) {
       console.error(error);
       process.exit(1);
@@ -99,7 +99,7 @@ for (const [dependencyShortName, dependencyFullName] of Object.entries(Supported
               true,
               parent.colors
             );
-        console.log(releases);
+        console.info(releases);
       } catch (error) {
         console.error(error);
         process.exit(1);
@@ -127,7 +127,7 @@ program
         ? await electronInfo.getAllReleases()
         : await electronInfo.getAllReleases(true, parent.colors);
 
-      console.log(releases);
+      console.info(releases);
     } catch (error) {
       console.error(error);
       process.exit(1);
@@ -137,6 +137,6 @@ program
 program.parse(process.argv);
 
 if (!program.args.length || !matchedCommand) {
-  console.log('Invalid or no command specified.');
+  console.error('Invalid or no command specified.');
   program.help();
 }
