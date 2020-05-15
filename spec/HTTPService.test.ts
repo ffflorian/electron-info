@@ -1,11 +1,11 @@
 import * as nock from 'nock';
+import * as HTTP_STATUS from 'http-status-codes';
 
 import {HTTPService} from '../src/HTTPService';
 
 const mockUrl = 'http://example.com';
 const FIVE_SECONDS_IN_MILLIS = 5000;
 const HALF_SECOND_IN_MILLIS = 500;
-const HTTP_CODE_OK = 200;
 
 describe('HTTPService', () => {
   const httpService = new HTTPService({
@@ -17,7 +17,7 @@ describe('HTTPService', () => {
     nock(mockUrl)
       .get('/')
       .delayConnection(FIVE_SECONDS_IN_MILLIS)
-      .reply(HTTP_CODE_OK, [{data: 'invalid'}])
+      .reply(HTTP_STATUS.OK, [{data: 'invalid'}])
   );
 
   afterEach(() => nock.cleanAll());

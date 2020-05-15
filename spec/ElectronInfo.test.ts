@@ -2,6 +2,7 @@ import * as fs from 'fs-extra';
 import * as nock from 'nock';
 import * as path from 'path';
 import * as uuid from 'uuid';
+import * as HTTP_STATUS from 'http-status-codes';
 
 import {ElectronInfo, RawReleaseInfo} from '../src/ElectronInfo';
 
@@ -11,8 +12,6 @@ const mockUrl = 'http://example.com';
 const invalidUrl = 'http://invalid.inv';
 const fixturesDir = path.resolve(__dirname, 'fixtures');
 const fullReleasesFile = path.join(fixturesDir, 'electron-releases-full.json');
-const HTTP_CODE_OK = 200;
-const HTTP_CODE_NOT_FOUND = 404;
 
 const createRandomBody = (): RawReleaseInfo[] => [
   {
@@ -40,7 +39,7 @@ describe('ElectronInfo', () => {
     releases = await fs.readFile(fullReleasesFile, 'utf8');
   });
 
-  beforeEach(() => nock(mockUrl).get('/').reply(HTTP_CODE_OK, releases));
+  beforeEach(() => nock(mockUrl).get('/').reply(HTTP_STATUS.OK, releases));
 
   afterAll(() => fs.remove(tempDir));
 
@@ -91,7 +90,7 @@ describe('ElectronInfo', () => {
 
       await provideReleaseFile();
 
-      nock(customUrl).get('/').reply(HTTP_CODE_OK, customBody);
+      nock(customUrl).get('/').reply(HTTP_STATUS.OK, customBody);
 
       const result = await new ElectronInfo({
         forceUpdate: true,
@@ -147,7 +146,7 @@ describe('ElectronInfo', () => {
     });
 
     it('Uses a local copy of the releases', async () => {
-      nock(invalidUrl).get('/').reply(HTTP_CODE_NOT_FOUND);
+      nock(invalidUrl).get('/').reply(HTTP_STATUS.NOT_FOUND);
 
       await provideReleaseFile();
 
