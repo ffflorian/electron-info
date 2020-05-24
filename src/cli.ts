@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import * as program from 'commander';
+import * as commander from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -16,7 +16,7 @@ const {description, name, version}: {description: string; name: string; version:
 
 let matchedCommand = false;
 
-program
+commander
   .name(name)
   .description(
     `${description}
@@ -36,7 +36,7 @@ Allowed version argument inputs:
   .option('--no-colors', `Don't use colors for displaying`)
   .option('--no-prereleases', `Don't include Electron prereleases`);
 
-program
+commander
   .command('electron')
   .alias('e')
   .description('Get informations about an Electron release')
@@ -45,7 +45,7 @@ program
     matchedCommand = true;
     if (!version) {
       console.error('No version specified.');
-      program.outputHelp();
+      commander.outputHelp();
       process.exit();
     }
     try {
@@ -69,7 +69,7 @@ program
   });
 
 for (const [dependencyShortName, dependencyFullName] of Object.entries(SupportedDependencies)) {
-  program
+  commander
     .command(dependencyShortName)
     .alias(dependencyShortName[0])
     .description(`Get informations about ${dependencyFullName} releases`)
@@ -78,7 +78,7 @@ for (const [dependencyShortName, dependencyFullName] of Object.entries(Supported
       matchedCommand = true;
       if (!version) {
         console.error('No version specified.');
-        program.outputHelp();
+        commander.outputHelp();
         process.exit();
       }
       try {
@@ -107,7 +107,7 @@ for (const [dependencyShortName, dependencyFullName] of Object.entries(Supported
     });
 }
 
-program
+commander
   .command('all', {isDefault: true})
   .alias('a')
   .description('Get informations about all releases')
@@ -134,9 +134,9 @@ program
     }
   });
 
-program.parse(process.argv);
+commander.parse(process.argv);
 
-if (!program.args.length || !matchedCommand) {
+if (!commander.args.length || !matchedCommand) {
   console.error('Invalid or no command specified.');
-  program.help();
+  commander.help();
 }
