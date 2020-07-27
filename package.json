@@ -43,7 +43,7 @@
     "fs-extra": "9.0.1",
     "http-status-codes": "1.4.0",
     "husky": "4.2.5",
-    "jasmine": "3.6.0",
+    "jasmine": "3.6.1",
     "lint-staged": "10.2.11",
     "nock": "13.0.2",
     "prettier": "2.0.5",
