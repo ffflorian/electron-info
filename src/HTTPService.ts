@@ -1,4 +1,4 @@
-import axios from 'axios';
+import got from 'got';
 import {promises as fs} from 'fs';
 import * as logdown from 'logdown';
 import {inspect} from 'util';
@@ -29,8 +29,8 @@ export class HTTPService {
     let releases = [];
 
     try {
-      const response = await axios.get<RawReleaseInfo[]>(downloadUrl, {timeout: this.options.timeout});
-      releases = response.data;
+      const request = got.get(downloadUrl, {timeout: this.options.timeout});
+      releases = await request.json<RawReleaseInfo[]>();
     } catch (error) {
       throw new Error(`Request failed: "${error.message}"`);
     }

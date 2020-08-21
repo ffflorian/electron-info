@@ -3,7 +3,7 @@
     "alwaysStrict": true,
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["esnext", "DOM"],
+    "lib": ["ESNext"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmitOnError": true,
