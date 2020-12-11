@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/ffflorian/electron-info/compare/v1.16.0...v1.16.1) (2020-12-11)
+
+
+### Bug Fixes
+
+* Actually activate "latest" switch ([4a65a54](https://github.com/ffflorian/electron-info/commit/4a65a54dccc587dc3b3c26db03b6ff9bfae6b570))
+
 # [1.16.0](https://github.com/ffflorian/electron-info/compare/v1.15.1...v1.16.0) (2020-12-11)
 
 ### Features
