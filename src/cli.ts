@@ -53,6 +53,7 @@ commander
       const electronInfo = new ElectronInfo({
         ...(parent.debug && {debug: true}),
         ...(parent.force && {forceUpdate: true}),
+        ...(parent.latest && {latest: true}),
         ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
         ...(typeof parent.prereleases !== undefined && {electronPrereleases: parent.prereleases}),
         ...(parent.source && {releasesUrl: parent.source}),
