@@ -28,6 +28,7 @@ Allowed version argument inputs:
   )
   .option('-d, --debug', 'Enable debug logging')
   .option('-f, --force', 'Force downloading the latest release file')
+  .option('-a, --latest', 'List only the latest release (alias for --limit 1, disables limit)')
   .option('-l, --limit <number>', 'Limit output of releases')
   .option('-r, --raw', 'Output raw JSON')
   .option('-s, --source <url>', 'Use a custom releases source URL or path')

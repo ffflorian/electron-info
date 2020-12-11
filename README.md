@@ -23,6 +23,8 @@ Allowed version argument inputs:
 Options:
   -d, --debug             Enable debug logging
   -f, --force             Force downloading the latest release file
+  -a, --latest            List only the latest release (alias for --limit 1,
+                          disables limit)
   -l, --limit <number>    Limit output of releases
   -r, --raw               Output raw JSON
   -s, --source <url>      Use a custom releases source URL or path
@@ -30,7 +32,7 @@ Options:
   -v, --version           output the version number
   --no-colors             Don't use colors for displaying
   --no-prereleases        Don't include Electron prereleases
-  -h, --help              output usage information
+  -h, --help              display help for command
 
 Commands:
   electron|e [version]    Get informations about an Electron release
@@ -42,6 +44,7 @@ Commands:
   v8|v [version]          Get informations about V8 releases
   zlib|z [version]        Get informations about zlib releases
   all|a                   Get informations about all releases
+  help [command]          display help for command
 ```
 
 ### Examples
