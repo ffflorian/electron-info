@@ -37,7 +37,13 @@ export interface Options {
   /** Force downloading the latest release file. Default: `false`. */
   forceUpdate?: boolean;
   /**
+   * Include only the latest release. Alias for `limit=1`. Disables `limit`.
+   * Default: `false`.
+   */
+  latest?: boolean;
+  /**
    * Limit output of releases. Everything below 1 will be treated as no limit.
+   * Disables `latest`.
    * Default: 0.
    */
   limit?: number;
@@ -59,6 +65,7 @@ const defaultOptions: Required<Options> = {
   debug: false,
   electronPrereleases: true,
   forceUpdate: false,
+  latest: false,
   limit: 0,
   releasesUrl: 'https://raw.githubusercontent.com/electron/releases/master/lite.json',
   tempDirectory: '',
@@ -99,7 +106,7 @@ export class ElectronInfo {
   async getAllReleases(formatted?: boolean, colored?: boolean): Promise<RawReleaseInfo[] | string> {
     this.logger.log('Getting all releases:', {colored, formatted});
     const allReleases = await this.fileService.getReleases();
-    const limitedReleases = this.limitReleases(allReleases, this.options.limit);
+    const limitedReleases = this.limitReleases(allReleases);
     return formatted ? this.formatReleases(limitedReleases, colored) : limitedReleases;
   }
 
@@ -123,7 +130,7 @@ export class ElectronInfo {
       release => release.deps && dependencyVersions.includes(release.deps[dependency])
     );
 
-    const limitedReleases = this.limitReleases(filteredReleases, this.options.limit);
+    const limitedReleases = this.limitReleases(filteredReleases);
     return formatted ? this.formatDependencyReleases(limitedReleases, colored) : limitedReleases;
   }
 
@@ -140,7 +147,7 @@ export class ElectronInfo {
     const electronVersions = await this.getVersions(allReleases, 'electron', version);
     const filteredReleases = allReleases.filter(release => electronVersions.includes(release.version));
 
-    const limitedReleases = this.limitReleases(filteredReleases, this.options.limit);
+    const limitedReleases = this.limitReleases(filteredReleases);
     return formatted ? this.formatReleases(limitedReleases, colored) : limitedReleases;
   }
 
@@ -255,7 +262,8 @@ export class ElectronInfo {
     return dependencyVersions;
   }
 
-  private limitReleases(releases: RawReleaseInfo[], limit?: number): RawReleaseInfo[] {
+  private limitReleases(releases: RawReleaseInfo[]): RawReleaseInfo[] {
+    const limit = this.options.limit || (this.options.latest ? 1 : undefined);
     if (limit) {
       const slicedArray = releases.slice(0, limit);
       this.logger.log('Limiting found versions', {

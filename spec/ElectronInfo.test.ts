@@ -155,5 +155,16 @@ describe('ElectronInfo', () => {
         tempDirectory: tempDirDownload,
       }).getDependencyReleases('chrome', 'all');
     });
+
+    it('Uses latest as alias for limit=1', async () => {
+      const result = await new ElectronInfo({
+        latest: true,
+        releasesUrl: mockUrl,
+        tempDirectory: tempDir,
+      }).getElectronReleases('all');
+
+      expect(result.length).toBe(1);
+      expect(result[0].version).toBe('8.0.0-nightly.20190820');
+    });
   });
 });
