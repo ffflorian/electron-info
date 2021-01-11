@@ -9,7 +9,7 @@
     "commander": "6.2.1",
     "date-fns": "2.16.1",
     "logdown": "3.3.1",
-    "parse-path": "4.0.2",
+    "parse-path": "4.0.3",
     "semver": "7.3.4",
     "table": "6.0.7"
   },
