@@ -89,6 +89,7 @@ for (const [dependencyShortName, dependencyFullName] of Object.entries(Supported
         const electronInfo = new ElectronInfo({
           ...(commanderOptions.debug && {debug: true}),
           ...(commanderOptions.force && {forceUpdate: true}),
+          ...(commanderOptions.latest && {latest: true}),
           ...(commanderOptions.limit && {limit: parseInt(commanderOptions.limit, 10)}),
           ...(typeof commanderOptions.prereleases !== undefined && {electronPrereleases: commanderOptions.prereleases}),
           ...(commanderOptions.source && {releasesUrl: commanderOptions.source}),
@@ -121,6 +122,7 @@ commander
       const electronInfo = new ElectronInfo({
         ...(commanderOptions.debug && {debug: true}),
         ...(commanderOptions.force && {forceUpdate: true}),
+        ...(commanderOptions.latest && {latest: true}),
         ...(commanderOptions.limit && {limit: parseInt(commanderOptions.limit, 10)}),
         ...(typeof commanderOptions.prereleases !== undefined && {electronPrereleases: commanderOptions.prereleases}),
         ...(commanderOptions.source && {releasesUrl: commanderOptions.source}),
