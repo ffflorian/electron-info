@@ -1,3 +1,10 @@
+## [1.16.2](https://github.com/ffflorian/electron-info/compare/v1.16.1...v1.16.2) (2021-01-18)
+
+
+### Bug Fixes
+
+* Add missing "latest" option ([02ffed2](https://github.com/ffflorian/electron-info/commit/02ffed2b9c3a91bafd67faa15de8ccf21cddc986))
+
 ## [1.16.1](https://github.com/ffflorian/electron-info/compare/v1.16.0...v1.16.1) (2020-12-11)
 
 
