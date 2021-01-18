@@ -37,32 +37,34 @@ Allowed version argument inputs:
   .option('--no-colors', `Don't use colors for displaying`)
   .option('--no-prereleases', `Don't include Electron prereleases`);
 
+const commanderOptions = commander.opts();
+
 commander
   .command('electron')
   .alias('e')
   .description('Get informations about an Electron release')
   .arguments('[version]')
-  .action(async (version, {parent}) => {
+  .action(async (input?: string) => {
     matchedCommand = true;
-    if (!version) {
+    if (!input) {
       console.error('No version specified.');
       commander.outputHelp();
       process.exit();
     }
     try {
       const electronInfo = new ElectronInfo({
-        ...(parent.debug && {debug: true}),
-        ...(parent.force && {forceUpdate: true}),
-        ...(parent.latest && {latest: true}),
-        ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
-        ...(typeof parent.prereleases !== undefined && {electronPrereleases: parent.prereleases}),
-        ...(parent.source && {releasesUrl: parent.source}),
-        ...(parent.timeout && {timeout: parseInt(parent.timeout, 10)}),
+        ...(commanderOptions.debug && {debug: true}),
+        ...(commanderOptions.force && {forceUpdate: true}),
+        ...(commanderOptions.latest && {latest: true}),
+        ...(commanderOptions.limit && {limit: parseInt(commanderOptions.limit, 10)}),
+        ...(typeof commanderOptions.prereleases !== undefined && {electronPrereleases: commanderOptions.prereleases}),
+        ...(commanderOptions.source && {releasesUrl: commanderOptions.source}),
+        ...(commanderOptions.timeout && {timeout: parseInt(commanderOptions.timeout, 10)}),
       });
 
-      const releases = parent.raw
-        ? await electronInfo.getElectronReleases(version)
-        : await electronInfo.getElectronReleases(version, true, parent.colors);
+      const releases = commanderOptions.raw
+        ? await electronInfo.getElectronReleases(input)
+        : await electronInfo.getElectronReleases(input, true, commanderOptions.colors);
       console.info(releases);
     } catch (error) {
       console.error(error);
@@ -76,7 +78,7 @@ for (const [dependencyShortName, dependencyFullName] of Object.entries(Supported
     .alias(dependencyShortName[0])
     .description(`Get informations about ${dependencyFullName} releases`)
     .arguments('[version]')
-    .action(async (version, {parent}) => {
+    .action(async version => {
       matchedCommand = true;
       if (!version) {
         console.error('No version specified.');
@@ -85,21 +87,21 @@ for (const [dependencyShortName, dependencyFullName] of Object.entries(Supported
       }
       try {
         const electronInfo = new ElectronInfo({
-          ...(parent.debug && {debug: true}),
-          ...(parent.force && {forceUpdate: true}),
-          ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
-          ...(typeof parent.prereleases !== undefined && {electronPrereleases: parent.prereleases}),
-          ...(parent.source && {releasesUrl: parent.source}),
-          ...(parent.timeout && {timeout: parent.timeout}),
+          ...(commanderOptions.debug && {debug: true}),
+          ...(commanderOptions.force && {forceUpdate: true}),
+          ...(commanderOptions.limit && {limit: parseInt(commanderOptions.limit, 10)}),
+          ...(typeof commanderOptions.prereleases !== undefined && {electronPrereleases: commanderOptions.prereleases}),
+          ...(commanderOptions.source && {releasesUrl: commanderOptions.source}),
+          ...(commanderOptions.timeout && {timeout: commanderOptions.timeout}),
         });
 
-        const releases = parent.raw
+        const releases = commanderOptions.raw
           ? await electronInfo.getDependencyReleases(dependencyShortName as keyof RawDeps, version)
           : await electronInfo.getDependencyReleases(
               dependencyShortName as keyof RawDeps,
               version,
               true,
-              parent.colors
+              commanderOptions.colors
             );
         console.info(releases);
       } catch (error) {
@@ -113,21 +115,21 @@ commander
   .command('all', {isDefault: true})
   .alias('a')
   .description('Get informations about all releases')
-  .action(async ({parent}) => {
+  .action(async () => {
     matchedCommand = true;
     try {
       const electronInfo = new ElectronInfo({
-        ...(parent.debug && {debug: true}),
-        ...(parent.force && {forceUpdate: true}),
-        ...(parent.limit && {limit: parseInt(parent.limit, 10)}),
-        ...(typeof parent.prereleases !== undefined && {electronPrereleases: parent.prereleases}),
-        ...(parent.source && {releasesUrl: parent.source}),
-        ...(parent.timeout && {timeout: parent.timeout}),
+        ...(commanderOptions.debug && {debug: true}),
+        ...(commanderOptions.force && {forceUpdate: true}),
+        ...(commanderOptions.limit && {limit: parseInt(commanderOptions.limit, 10)}),
+        ...(typeof commanderOptions.prereleases !== undefined && {electronPrereleases: commanderOptions.prereleases}),
+        ...(commanderOptions.source && {releasesUrl: commanderOptions.source}),
+        ...(commanderOptions.timeout && {timeout: commanderOptions.timeout}),
       });
 
-      const releases = parent.raw
+      const releases = commanderOptions.raw
         ? await electronInfo.getAllReleases()
-        : await electronInfo.getAllReleases(true, parent.colors);
+        : await electronInfo.getAllReleases(true, commanderOptions.colors);
 
       console.info(releases);
     } catch (error) {
