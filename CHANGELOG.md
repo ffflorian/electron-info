@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/ffflorian/electron-info/compare/v1.16.2...v1.17.0) (2021-01-20)
+
+
+### Features
+
+* Use -L instead of -a for --latest ([474758e](https://github.com/ffflorian/electron-info/commit/474758e848c77e53942655678faacbe0ff99f4f7))
+
 ## [1.16.2](https://github.com/ffflorian/electron-info/compare/v1.16.1...v1.16.2) (2021-01-18)
 
 
