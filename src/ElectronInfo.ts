@@ -37,13 +37,12 @@ export interface Options {
   /** Force downloading the latest release file. Default: `false`. */
   forceUpdate?: boolean;
   /**
-   * Include only the latest release. Alias for `limit=1`. Disables `limit`.
+   * Include only the latest release. Alias for `limit=1`. Ignores `limit`.
    * Default: `false`.
    */
   latest?: boolean;
   /**
    * Limit output of releases. Everything below 1 will be treated as no limit.
-   * Disables `latest`.
    * Default: 0.
    */
   limit?: number;
