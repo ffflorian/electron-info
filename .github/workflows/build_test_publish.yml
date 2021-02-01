@@ -16,18 +16,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: mstachniuk/ci-skip@v1
-        with:
-          fail-fast: true
-          exit-code: 22
+      - name: Skip CI check
+        uses: mstachniuk/ci-skip@v1
 
       - name: Set up Node.js
-        if: success()
+        if: env.CI_SKIP == 'false'
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
 
       - name: Get yarn cache
+        if: env.CI_SKIP == 'false'
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - uses: actions/cache@v2
@@ -39,6 +38,7 @@ jobs:
             ${{runner.os}}-yarn-
 
       - name: Build, lint and test
+        if: env.CI_SKIP == 'false'
         run: |
           yarn
           yarn lint
@@ -47,7 +47,9 @@ jobs:
           yarn flatten
 
       - name: Release on npm
-        if: github.event_name != 'pull_request'
+        if: |
+          github.event_name != 'pull_request' &&
+          env.CI_SKIP == 'false'
         env:
           GIT_AUTHOR_NAME: ffflobot
           GIT_AUTHOR_EMAIL: ffflobot@users.noreply.github.com
@@ -62,7 +64,9 @@ jobs:
           yarn release -r "${REPO_URL}"
 
       - name: Release on GitHub
-        if: github.event_name != 'pull_request'
+        if: |
+          github.event_name != 'pull_request' &&
+          env.CI_SKIP == 'false'
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
