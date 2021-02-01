@@ -22,6 +22,7 @@ jobs:
           exit-code: 22
 
       - name: Set up Node.js
+        if: success()
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
