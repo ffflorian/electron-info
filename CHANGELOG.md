@@ -1,3 +1,10 @@
+## [1.17.1](https://github.com/ffflorian/electron-info/compare/v1.17.0...v1.17.1) (2021-02-14)
+
+
+### Bug Fixes
+
+* Add logo, update texts ([1c12811](https://github.com/ffflorian/electron-info/commit/1c12811a9864229564c4421d92f56c5def40f521))
+
 # [1.17.0](https://github.com/ffflorian/electron-info/compare/v1.16.2...v1.17.0) (2021-01-20)
 
 
