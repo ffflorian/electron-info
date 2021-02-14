@@ -13,7 +13,7 @@
     "semver": "7.3.4",
     "table": "6.0.7"
   },
-  "description": "Get informations about Electron releases.",
+  "description": "Get useful data about Electron releases.",
   "devDependencies": {
     "@ffflorian/eslint-config": "0.6.2",
     "@ffflorian/prettier-config": "0.1.2",

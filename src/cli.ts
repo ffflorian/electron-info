@@ -26,23 +26,23 @@ Allowed version argument inputs:
   - npm dist tags (e.g. "5-0-x", only Electron)
   - "all"`
   )
-  .option('-d, --debug', 'Enable debug logging')
-  .option('-f, --force', 'Force downloading the latest release file')
-  .option('-L, --latest', 'List only the latest release (alias for --limit 1, ignores limit)')
-  .option('-l, --limit <number>', 'Limit output of releases')
-  .option('-r, --raw', 'Output raw JSON')
-  .option('-s, --source <url>', 'Use a custom releases source URL or path')
-  .option('-t, --timeout <number>', 'Use a custom HTTP timeout')
+  .option('-d, --debug', 'enable debug logging')
+  .option('-f, --force', 'force downloading the latest release file')
+  .option('-L, --latest', 'list only the latest release (alias for --limit 1, ignores limit)')
+  .option('-l, --limit <number>', 'limit output of releases')
+  .option('-r, --raw', 'output raw JSON')
+  .option('-s, --source <url>', 'use a custom releases source URL or path')
+  .option('-t, --timeout <number>', 'use a custom HTTP timeout')
   .version(version, '-v, --version')
-  .option('--no-colors', `Don't use colors for displaying`)
-  .option('--no-prereleases', `Don't include Electron prereleases`);
+  .option('--no-colors', `don't use colors for displaying`)
+  .option('--no-prereleases', `don't include Electron prereleases`);
 
 const commanderOptions = commander.opts();
 
 commander
   .command('electron')
   .alias('e')
-  .description('Get informations about an Electron release')
+  .description('show data for Electron releases')
   .arguments('[version]')
   .action(async (input?: string) => {
     matchedCommand = true;
@@ -76,7 +76,7 @@ for (const [dependencyShortName, dependencyFullName] of Object.entries(Supported
   commander
     .command(dependencyShortName)
     .alias(dependencyShortName[0])
-    .description(`Get informations about ${dependencyFullName} releases`)
+    .description(`show data for ${dependencyFullName} releases`)
     .arguments('[version]')
     .action(async version => {
       matchedCommand = true;
@@ -115,7 +115,7 @@ for (const [dependencyShortName, dependencyFullName] of Object.entries(Supported
 commander
   .command('all', {isDefault: true})
   .alias('a')
-  .description('Get informations about all releases')
+  .description('show data for all kinds of releases')
   .action(async () => {
     matchedCommand = true;
     try {

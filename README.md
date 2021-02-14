@@ -1,6 +1,8 @@
+![electron-info](./electron-info-icon.png)
+
 # electron-info [![Build Status](https://github.com/ffflorian/electron-info/workflows/Build/badge.svg)](https://github.com/ffflorian/electron-info/actions/) [![npm version](https://img.shields.io/npm/v/electron-info.svg?style=flat)](https://www.npmjs.com/package/electron-info)
 
-Get informations about Electron releases. Uses [electron-releases](https://github.com/electron/releases).
+Get useful data about Electron releases. Uses [electron-releases](https://github.com/electron/releases) in the background.
 
 ## Installation
 
@@ -13,7 +15,7 @@ If you'd like to install it permanently, run `yarn global add electron-info` or 
 ```
 Usage: electron-info [options] [command]
 
-Get informations about Electron releases.
+Get useful data about Electron releases.
 
 Allowed version argument inputs:
   - SemVer versions (e.g. "~7")
@@ -21,29 +23,29 @@ Allowed version argument inputs:
   - "all"
 
 Options:
-  -d, --debug             Enable debug logging
-  -f, --force             Force downloading the latest release file
-  -L, --latest            List only the latest release (alias for --limit 1,
+  -d, --debug             enable debug logging
+  -f, --force             force downloading the latest release file
+  -L, --latest            list only the latest release (alias for --limit 1,
                           ignores limit)
-  -l, --limit <number>    Limit output of releases
-  -r, --raw               Output raw JSON
-  -s, --source <url>      Use a custom releases source URL or path
-  -t, --timeout <number>  Use a custom HTTP timeout
+  -l, --limit <number>    limit output of releases
+  -r, --raw               output raw JSON
+  -s, --source <url>      use a custom releases source URL or path
+  -t, --timeout <number>  use a custom HTTP timeout
   -v, --version           output the version number
-  --no-colors             Don't use colors for displaying
-  --no-prereleases        Don't include Electron prereleases
+  --no-colors             don't use colors for displaying
+  --no-prereleases        don't include Electron prereleases
   -h, --help              display help for command
 
 Commands:
-  electron|e [version]    Get informations about an Electron release
-  chrome|c [version]      Get informations about Chrome releases
-  modules|m [version]     Get informations about Modules (Node ABI) releases
-  node|n [version]        Get informations about Node.js releases
-  openssl|o [version]     Get informations about OpenSSL releases
-  uv|u [version]          Get informations about uv releases
-  v8|v [version]          Get informations about V8 releases
-  zlib|z [version]        Get informations about zlib releases
-  all|a                   Get informations about all releases
+  electron|e [version]    show data for Electron releases
+  chrome|c [version]      show data for Chrome releases
+  modules|m [version]     show data for Modules (Node ABI) releases
+  node|n [version]        show data for Node.js releases
+  openssl|o [version]     show data for OpenSSL releases
+  uv|u [version]          show data for uv releases
+  v8|v [version]          show data for V8 releases
+  zlib|z [version]        show data for zlib releases
+  all|a                   show data for all kinds of releases
   help [command]          display help for command
 ```
 
