@@ -1,3 +1,10 @@
+## [1.17.2](https://github.com/ffflorian/electron-info/compare/v1.17.1...v1.17.2) (2021-02-21)
+
+
+### Bug Fixes
+
+* Releases URL in comment and update dependencies ([b6bdde6](https://github.com/ffflorian/electron-info/commit/b6bdde62618c09de3346b263a4e9437bd201e03f))
+
 ## [1.17.1](https://github.com/ffflorian/electron-info/compare/v1.17.0...v1.17.1) (2021-02-14)
 
 
