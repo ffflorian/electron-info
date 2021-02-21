@@ -48,7 +48,7 @@ export interface Options {
   limit?: number;
   /**
    * Can be a URL or a local path. Default:
-   * https://unpkg.com/electron-releases@latest/lite.json.
+   * https://raw.githubusercontent.com/electron/releases/master/lite.json.
    */
   releasesUrl?: string;
   /**
