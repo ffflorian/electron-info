@@ -530,10 +530,12 @@
   resolved "https://registry.npmjs.org/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
-"@types/parse-path@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.npmjs.org/@types/parse-path/-/parse-path-4.0.0.tgz#cfcf88ea3f8f6bd4673807a756f864debe6d4e04"
-  integrity sha512-Igek7Jqo2Or7UCSwass6o66HOEUG+YxujfdpFU1t+RZLRFjgGmzenHmN0//6rvGe77KNe9vf2ELEvLOlEqcoSg==
+"@types/parse-path@4.0.1":
+  version "4.0.1"
+  resolved "https://registry.npmjs.org/@types/parse-path/-/parse-path-4.0.1.tgz#e5a3eb451c5a877f99de4378a3a1c717d747ae81"
+  integrity sha512-ZQffgFDaKTpSeO/NcBVPbJ21VvIuKAEcVMLapL6ltfrfIZyxNMjoQA+LB6af0E3C8dNVj+L76gjR6KzjKOA/9A==
+  dependencies:
+    query-string "^6.13.8"
 
 "@types/retry@^0.12.0":
   version "0.12.0"
