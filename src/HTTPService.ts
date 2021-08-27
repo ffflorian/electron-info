@@ -32,7 +32,7 @@ export class HTTPService {
       const response = await axios.get<RawReleaseInfo[]>(downloadUrl, {timeout: this.options.timeout});
       releases = response.data;
     } catch (error) {
-      throw new Error(`Request failed: "${error.message}"`);
+      throw new Error(`Request failed: "${(error as Error).message}"`);
     }
 
     // eslint-disable-next-line no-magic-numbers

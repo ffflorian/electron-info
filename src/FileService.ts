@@ -97,7 +97,7 @@ export class FileService {
       await fs.access(filePath, fsConstants.F_OK | fsConstants.R_OK);
       return true;
     } catch (error) {
-      this.logger.log('File is not readable:', {errorMessage: error.message});
+      this.logger.log('File is not readable:', {errorMessage: (error as Error).message});
       return false;
     }
   }
