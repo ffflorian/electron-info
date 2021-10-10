@@ -7,7 +7,7 @@
     "axios": "0.22.0",
     "chalk": "4.1.2",
     "commander": "8.2.0",
-    "date-fns": "2.24.0",
+    "date-fns": "2.25.0",
     "logdown": "3.3.1",
     "parse-path": "4.0.3",
     "semver": "7.3.5",
