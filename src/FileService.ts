@@ -1,8 +1,8 @@
 import {isAfter as isAfterDate, sub as subtractDate} from 'date-fns';
 import {constants as fsConstants, promises as fs} from 'fs';
+import parseUrl from 'parse-url';
 import * as logdown from 'logdown';
 import * as os from 'os';
-import * as parsePath from 'parse-path';
 import * as path from 'path';
 
 import type {Options, RawReleaseInfo} from './ElectronInfo';
@@ -31,7 +31,7 @@ export class FileService {
 
   async getReleases(): Promise<RawReleaseInfo[]> {
     this.logger.log('Parsing releases URL', {releasesUrl: this.options.releasesUrl});
-    const parsedUrl = parsePath(this.options.releasesUrl);
+    const parsedUrl = parseUrl(this.options.releasesUrl);
     if (!parsedUrl.href) {
       throw new Error('Invalid releases URL provided');
     }
