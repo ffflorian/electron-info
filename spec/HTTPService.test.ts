@@ -1,5 +1,5 @@
-import * as nock from 'nock';
 import {StatusCodes as HTTP_STATUS} from 'http-status-codes';
+import nock from 'nock';
 
 import {HTTPService} from '../src/HTTPService';
 

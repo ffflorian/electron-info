@@ -1,8 +1,8 @@
+import {StatusCodes as HTTP_STATUS} from 'http-status-codes';
+import nock from 'nock';
 import * as fs from 'fs-extra';
-import * as nock from 'nock';
 import * as path from 'path';
 import * as uuid from 'uuid';
-import {StatusCodes as HTTP_STATUS} from 'http-status-codes';
 
 import {ElectronInfo, RawReleaseInfo} from '../src/ElectronInfo';
 

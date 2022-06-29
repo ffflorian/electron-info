@@ -1,8 +1,8 @@
 import {Chalk, bold as chalkBold} from 'chalk';
 import {format as formatDate} from 'date-fns';
-import * as logdown from 'logdown';
-import * as semver from 'semver';
 import {table as createTable} from 'table';
+import logdown from 'logdown';
+import * as semver from 'semver';
 
 import {FileService} from './FileService';
 

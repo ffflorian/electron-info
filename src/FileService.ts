@@ -1,7 +1,7 @@
 import {isAfter as isAfterDate, sub as subtractDate} from 'date-fns';
 import {constants as fsConstants, promises as fs} from 'fs';
 import parseUrl from 'parse-url';
-import * as logdown from 'logdown';
+import logdown from 'logdown';
 import * as os from 'os';
 import * as path from 'path';
 
