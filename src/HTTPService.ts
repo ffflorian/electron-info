@@ -1,7 +1,7 @@
-import axios from 'axios';
 import {promises as fs} from 'fs';
-import * as logdown from 'logdown';
 import {inspect} from 'util';
+import axios from 'axios';
+import logdown from 'logdown';
 
 import type {Options, RawReleaseInfo} from './ElectronInfo';
 
