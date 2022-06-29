@@ -1,3 +1,10 @@
+## [1.17.3](https://github.com/ffflorian/electron-info/compare/v1.17.2...v1.17.3) (2022-06-29)
+
+
+### Bug Fixes
+
+* Use parse-url instead of parse-path ([#1060](https://github.com/ffflorian/electron-info/issues/1060)) ([f52ccd4](https://github.com/ffflorian/electron-info/commit/f52ccd4538f770e1247a79e31d48814428615c85))
+
 ## [1.17.2](https://github.com/ffflorian/electron-info/compare/v1.17.1...v1.17.2) (2021-02-21)
 
 
