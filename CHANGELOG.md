@@ -1,3 +1,10 @@
+## [1.17.4](https://github.com/ffflorian/electron-info/compare/v1.17.3...v1.17.4) (2022-07-05)
+
+
+### Bug Fixes
+
+* minor release ([7e29822](https://github.com/ffflorian/electron-info/commit/7e29822f7b29e5f6063e112b5c7bb45c24448d73))
+
 ## [1.17.3](https://github.com/ffflorian/electron-info/compare/v1.17.2...v1.17.3) (2022-06-29)
 
 
