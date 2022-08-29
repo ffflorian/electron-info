@@ -220,7 +220,7 @@ export class ElectronInfo {
   ): Promise<string[]> {
     this.logger.log('Getting versions:', {inputVersion, key});
     const satisfiesVersion = (dependencyVersion: string, inputVersion: string) => {
-      const dependencyVersionClean = semver.clean(dependencyVersion, {includePrerelease: true, loose: true}) || '';
+      const dependencyVersionClean = semver.clean(dependencyVersion, {loose: true}) || '';
       return semver.satisfies(dependencyVersionClean, inputVersion, {
         includePrerelease: true,
         loose: true,
