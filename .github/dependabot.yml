@@ -14,9 +14,6 @@ updates:
       - dependency-name: '@types/node'
         versions:
           - '> 16.x'
-      - dependency-name: 'husky'
-        versions:
-          - '> 4.x'
       - dependency-name: 'chalk'
         versions:
           - '> 4.x'
