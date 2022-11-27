@@ -17,3 +17,10 @@ updates:
       - dependency-name: 'chalk'
         versions:
           - '> 4.x'
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 99
+    assignees:
+      - ffflorian
