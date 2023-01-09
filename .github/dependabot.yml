@@ -13,7 +13,7 @@ updates:
     ignore:
       - dependency-name: '@types/node'
         versions:
-          - '> 16.x'
+          - '> 18.x'
       - dependency-name: 'chalk'
         versions:
           - '> 4.x'
